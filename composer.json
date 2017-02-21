@@ -1,0 +1,28 @@
+{
+    "name": "elchristo/calendar",
+    "description": "PHP component to build and convert source based calendars",
+    "keywords": [ "php, calendar" ],
+    "authors": [
+        {
+            "name": "Christoph Lehner",
+            "email": "cpl@elchristo.de"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Elchristo\\Calendar\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^5.5 || ^7.0",
+        "zendframework/zend-stdlib": "^2.4 || ^3.1",
+        "container-interop/container-interop": "^1.0",
+        "sandrokeil/interop-config": "^1.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require-dev": {
+        "fzaninotto/faker": "^1.6"
+    },
+    "license": "MIT"
+}

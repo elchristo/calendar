@@ -1,0 +1,47 @@
+<?php
+
+namespace Elchristo\Calendar;
+
+return [
+    'elchristo' => [
+
+        'calendar' => [
+
+            // calendars (optional)
+            'calendars' => [
+                'MyCalendar' => My\Calendar\ClassName::class
+            ],
+
+            // calendar event sources (mandatory)
+            'sources' => [
+                'MySource' => My\Source\ClassName::class
+            ],
+
+            // Source events (mandatory)
+            'events' => [
+                'MyEvent' => My\Event\ClassName::class
+            ],
+
+            // Coverter strategies
+            'converters' => [
+                'MyConverter' => My\Converter\ClassName::class
+            ],
+
+            // Event color configuration
+            'colors' => [
+                'codes' => [
+                    // some predefined color codes to be used by e.g. a color strategy
+                    '#fff',
+                    '#3af',
+                    '#ff0',
+                    '#000'
+                ],
+                'strategies' => [
+                    'MyColorStrategy' => My\ColorStrategy\ClassName::class
+                ]
+            ]
+
+        ]
+    ]
+];
+
