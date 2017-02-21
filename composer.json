@@ -1,7 +1,7 @@
 {
     "name": "elchristo/calendar",
     "description": "PHP component to build and convert source based calendars",
-    "keywords": [ "php, calendar" ],
+    "keywords": [ "php", "calendar" ],
     "authors": [
         {
             "name": "Christoph Lehner",
