@@ -55,6 +55,6 @@ class SourceLocator implements ConfigAwareInterface
     protected function isRegisteredSource($name)
     {
         $registeredSources = $this->getConfig()->getRegisteredSources();
-        return \array_key_exists($name, $registeredSources) && \class_exists($registeredSources[$name]);
+        return \array_key_exists($name, $registeredSources);
     }
 }
