@@ -2,6 +2,7 @@
 
 namespace Elchristo\Calendar\Service\Builder;
 
+use Elchristo\Calendar\Exception\InvalidArgumentException;
 use Elchristo\Calendar\Service\Builder\SourceBuilder;
 use Elchristo\Calendar\Service\Builder\SourceBuilderFactory;
 use Elchristo\Calendar\Service\Config\Config;
