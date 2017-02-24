@@ -94,8 +94,9 @@ class Config
      */
     public function getRegisteredColors()
     {
-        return (\is_array($this->config[self::CONFIG_KEY_COLORS])
-                && \is_array($this->config[self::CONFIG_KEY_COLORS]['codes'])
+        return (isset($this->config[self::CONFIG_KEY_COLORS])
+            && \is_array($this->config[self::CONFIG_KEY_COLORS])
+            && isset($this->config[self::CONFIG_KEY_COLORS]['codes'])
         )
             ? $this->config[self::CONFIG_KEY_COLORS]['codes']
             : [];
@@ -107,8 +108,9 @@ class Config
      */
     public function getRegisteredColorStrategies()
     {
-        return (\is_array($this->config[self::CONFIG_KEY_COLORS])
-            && \is_array($this->config[self::CONFIG_KEY_COLORS]['strategies'])
+        return (isset($this->config[self::CONFIG_KEY_COLORS])
+            && \is_array($this->config[self::CONFIG_KEY_COLORS])
+            && isset($this->config[self::CONFIG_KEY_COLORS]['strategies'])
         )
             ? $this->config[self::CONFIG_KEY_COLORS]['strategies']
             : [];
