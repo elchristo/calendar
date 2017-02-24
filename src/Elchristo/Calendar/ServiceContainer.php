@@ -22,6 +22,10 @@ class ServiceContainer implements ContainerInterface
         SourceBuilder::class => SourceBuilderFactory::class
     ];
 
+    /**
+     * Private constructor (only called by "create" method)
+     * @param array $config
+     */
     private function __construct(array $config)
     {
         $this->config = $config;
@@ -52,9 +56,9 @@ class ServiceContainer implements ContainerInterface
     {
         if ($name === 'config') {
             return $this->config;
-        } else if (true === $this->has($name)) {
+        } else if (isset($this->instances[$name])) {
             return $this->instances[$name];
-        } elseif (\array_key_exists($name, $this->factories)) {
+        } elseif (true === $this->has($name)) {
             $factoryClassName = $this->factories[$name];
             $factory = new $factoryClassName();
 
@@ -73,7 +77,7 @@ class ServiceContainer implements ContainerInterface
      */
     public function has($name)
     {
-        return (true === isset($this->instances[$name]));
+        return (true === isset($this->factories[$name]));
     }
 
     public function getConfig()
