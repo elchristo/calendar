@@ -75,7 +75,7 @@ class EventBuilder
             if (isset($options['color_strategy'])) {
                 $this->injectColorStrategy($event, $options['color_strategy']);
             } else {
-                \trigger_error(\sprintf('Missing option "colorStrategy" in event builder options for "%s". Default color strategy will be applied.', \get_class($event)), \E_USER_NOTICE);
+                \trigger_error(\sprintf('Missing option "color_strategy" in event builder options for "%s". Default color strategy will be applied.', \get_class($event)), \E_USER_NOTICE);
             }
         }
 
