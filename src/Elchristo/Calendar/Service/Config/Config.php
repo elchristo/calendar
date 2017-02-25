@@ -42,7 +42,7 @@ class Config
      */
     public function getRegisteredCalendars()
     {
-        if (!isset($this->config[self::CONFIG_KEY_CALENDARS])) {
+        if (!\array_key_exists(self::CONFIG_KEY_CALENDARS, $this->config)) {
             throw new RuntimeException(\sprintf('Missing configuration key "%s".', self::CONFIG_KEY_CALENDARS));
         }
 
@@ -55,7 +55,7 @@ class Config
      */
     public function getRegisteredSources()
     {
-        if (!isset($this->config[self::CONFIG_KEY_SOURCES])) {
+        if (!\array_key_exists(self::CONFIG_KEY_SOURCES, $this->config)) {
             throw new RuntimeException(\sprintf('Missing configuration key "%s".', self::CONFIG_KEY_SOURCES));
         }
 
@@ -68,7 +68,7 @@ class Config
      */
     public function getRegisteredEvents()
     {
-        if (!isset($this->config[self::CONFIG_KEY_EVENTS])) {
+        if (!\array_key_exists(self::CONFIG_KEY_EVENTS, $this->config)) {
             throw new RuntimeException(\sprintf('Missing configuration key "%s".', self::CONFIG_KEY_EVENTS));
         }
 
@@ -81,7 +81,7 @@ class Config
      */
     public function getRegisteredConverters()
     {
-        if (!isset($this->config[self::CONFIG_KEY_CONVERTERS])) {
+        if (!\array_key_exists(self::CONFIG_KEY_CONVERTERS, $this->config)) {
             throw new RuntimeException(\sprintf('Missing configuration key "%s".', self::CONFIG_KEY_CONVERTERS));
         }
 
