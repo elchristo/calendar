@@ -60,7 +60,10 @@ Below you can see a basic example configuration file :
 
                 // coverter strategies
                 'converters' => [
-                    'MyConverter' => My\Converter\ClassName::class
+                    'Json' => [
+                        My\Event\ClassName::class => My\Converter\ClassName::class
+                    ]
+
                 ],
 
                 // event color configuration

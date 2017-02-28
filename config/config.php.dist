@@ -24,7 +24,10 @@ return [
 
             // Coverter strategies
             'converters' => [
-                'MyConverter' => My\Converter\ClassName::class
+                'Json' => [
+                    My\Event\ClassName::class => My\Converter\ClassName::class
+                ]
+
             ],
 
             // Event color configuration
