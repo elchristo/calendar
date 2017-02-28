@@ -1,7 +1,7 @@
 # Calendar builder and converter
 
 `Calendar` is a PHP library to create custom calendars composed of self defined event sources.
-Furthermore you can convert built calendars easily into various output formats (eg. Json, ...).
+Furthermore you can convert built calendars easily into various output formats (eg. Json, iCalendar, ...).
 
 # Table of Contents
 
@@ -24,6 +24,9 @@ Furthermore you can convert built calendars easily into various output formats (
 
     // convert calendar into json
     $json = Converter::convert($calendar, 'json');
+
+    // convert calendar into "iCalendar" format (RFC 2445, VCALENDAR)
+    $ics = Converter::convert($calendar, 'ical');
 
 ## Full example
 
