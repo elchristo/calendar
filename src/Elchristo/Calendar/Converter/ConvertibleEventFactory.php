@@ -6,12 +6,10 @@ use Elchristo\Calendar\Exception\RuntimeException;
 use Elchristo\Calendar\Model\Event\CalendarEventInterface;
 
 /**
- * Factory to build convertible events
+ * Factory to build events which can be converted into various output formats
  */
 class ConvertibleEventFactory
 {
-    const DEFAULT_NAMESPACE_PREFIX = __NAMESPACE__ . '\\';
-
     private $registeredConverters = [];
 
     /**
@@ -23,10 +21,11 @@ class ConvertibleEventFactory
     }
 
     /**
-     * Build instance of convertable event (default event if not found)
+     * Build instance of event converter ("default" if not found)
      *
      * @param CalendarEventInterface $event  Calendar event to convert
      * @param string                 $format Output format
+     * @return ConvertibleEventInterface
      */
     public function build(CalendarEventInterface $event, $format)
     {
@@ -34,15 +33,13 @@ class ConvertibleEventFactory
         $name = \ucfirst($format);
 
         try {
-            if (isset($this->registeredConverters[$name]) && \array_key_exists($key, $this->registeredConverters[$name])) {
-                $eventClass = $this->registeredConverters[$name][$key];
-                return new $eventClass($event);
-            }
+            $eventClass = (isset($this->registeredConverters[$name]) && isset($this->registeredConverters[$name][$key]))
+                ? $this->registeredConverters[$name][$key]
+                : __NAMESPACE__ . "\\" . $name . "\Event\Default{$name}Event";
 
-            $defaultEventClass = self::DEFAULT_NAMESPACE_PREFIX . "{$name}\Event\Default{$name}Event";
-            return new $defaultEventClass($event);
+            return new $eventClass($event);
         } catch (\Exception $e) {
-            throw new RuntimeException("Impossible to build event of type {$event->getType()}.", $e->getCode(), $e);
+            throw new RuntimeException("Impossible to build converter for calendar event of type {$event->getType()}.", $e->getCode(), $e);
         }
     }
 }
