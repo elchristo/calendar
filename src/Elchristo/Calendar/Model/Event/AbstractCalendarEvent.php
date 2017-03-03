@@ -347,10 +347,12 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
      */
     public function setAlldayEvent($status = self::DEFAULT_IS_ALLDAY_EVENT)
     {
-        $this->alldayEvent = $status;
-        if ($status === true) {
-            $this->setHourFrom($this->buildDateTime(0, 0))
-                 ->setHourTo($this->buildDateTime(23, 59));
+        if (\is_bool($status)) {
+            $this->alldayEvent = $status;
+            if ($status === true) {
+                $this->setHourFrom($this->buildDateTime(0, 0))
+                     ->setHourTo($this->buildDateTime(23, 59));
+            }
         }
 
         return $this;
@@ -372,7 +374,7 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
      */
     public function setPublished($status = self::DEFAULT_IS_PUBLIC_EVENT)
     {
-        $this->public = $status;
+        $this->public = (bool) $status;
         return $this;
     }
 
