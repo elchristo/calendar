@@ -121,7 +121,7 @@ abstract class AbstractCalendar implements CalendarInterface, ConfigAwareInterfa
      */
     final public function hasSource($name)
     {
-        return \array_key_exists($name, $this->sourceList);
+        return isset($this->sourceList[$name]);
     }
 
     /**
