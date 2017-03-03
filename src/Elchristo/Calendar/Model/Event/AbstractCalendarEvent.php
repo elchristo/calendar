@@ -372,7 +372,7 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
      * @param boolean $status
      * @return self
      */
-    public function setPublished($status = self::DEFAULT_IS_PUBLIC_EVENT)
+    public function setPublic($status = self::DEFAULT_IS_PUBLIC_EVENT)
     {
         $this->public = (bool) $status;
         return $this;
