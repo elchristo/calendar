@@ -59,7 +59,7 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
      * @param array  $values  Event attribute values (name => value pairs)
      * @param array  $options Additional options passed to the event
      */
-    public function __construct($id, $values, $options)
+    public function __construct($id, array $values = [], array $options = [])
     {
         $this->id = $id;
 
