@@ -337,7 +337,7 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
      */
     public function isAlldayEvent()
     {
-        return $this->alldayEvent;
+        return (bool) $this->alldayEvent;
     }
 
     /**
@@ -347,9 +347,9 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
      */
     public function setAlldayEvent($status = self::DEFAULT_IS_ALLDAY_EVENT)
     {
-        if (\is_bool($status)) {
-            $this->alldayEvent = $status;
-            if ($status === true) {
+        if (\is_bool($status) || $status === 'true' || $status === 'false') {
+            $this->alldayEvent = (bool) $status;
+            if ((bool) $status === true) {
                 $this->setHourFrom($this->buildDateTime(0, 0))
                      ->setHourTo($this->buildDateTime(23, 59));
             }
