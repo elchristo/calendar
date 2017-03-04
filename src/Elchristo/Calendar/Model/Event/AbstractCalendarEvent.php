@@ -364,7 +364,7 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
      */
     public function isPublic()
     {
-        return $this->public;
+        return (bool) $this->public;
     }
 
     /**
