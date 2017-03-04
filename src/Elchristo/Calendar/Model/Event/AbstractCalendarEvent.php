@@ -191,12 +191,12 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
     }
 
     /**
-     *
+     * Get event title (short title if empty)
      * @return string
      */
     public function getTitle()
     {
-        return $this->title;
+        return isset($this->title) ? $this->title : $this->getTitleShort();
     }
 
     /**
