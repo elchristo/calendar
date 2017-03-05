@@ -5,6 +5,7 @@ namespace Elchristo\Calendar\Model\Event;
 use ArrayIterator;
 use IteratorAggregate;
 use Elchristo\Calendar\Model\Event\CalendarEventInterface;
+use Zend\Hydrator\Reflection as ReflectionHydrator;
 
 /**
  * Transversable collection of calendar events
@@ -32,8 +33,9 @@ class Collection implements IteratorAggregate
     public function toArray()
     {
         $events = [];
-        foreach ($this->events as $key => $value) {
-            $events[$key] = $value->toArray();
+        $hydrator = new ReflectionHydrator();
+        foreach ($this->events as $key => $event) {
+            $events[$key] = $hydrator->extract($event);
         }
 
         return $events;

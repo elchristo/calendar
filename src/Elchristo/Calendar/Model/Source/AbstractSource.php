@@ -31,7 +31,7 @@ abstract class AbstractSource implements SourceInterface
     public function __construct()
     {
         $this->initIdentifier();
-        $this->eventsCollection = new EventsCollection;
+        $this->eventsCollection = new EventsCollection();
     }
 
     public function getEventsCollection()
