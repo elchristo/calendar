@@ -235,11 +235,6 @@ class Collection implements IteratorAggregate
         return \array_keys($this->events);
     }
 
-    public function getValues()
-    {
-        return \array_values($this->events);
-    }
-
     public function isEmpty()
     {
         return empty($this->events);
