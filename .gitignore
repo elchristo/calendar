@@ -9,6 +9,10 @@ vendor/
 ehthumbs.db
 Thumbs.db
 
+# Tests
+tests/_output/*
+tests/_support/_generated/*
+
 # Tools
 .idea
 .project
