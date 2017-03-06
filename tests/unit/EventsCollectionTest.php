@@ -96,6 +96,21 @@ class EventsCollectionTest extends TestCase
     }
 
     /**
+     * Test to use "prefix_identifier" option for events in collection
+     */
+    public function testUseOptionEventIdentifierPrefix()
+    {
+        $eventA = new DefaultCalendarEvent(111, $this->events[111], [ 'prefix_identifier' => 'ID_prefix_' ]);
+        $eventB = new DefaultCalendarEvent(222, $this->events[222], [ 'prefix_identifier' => 'another_prefix_' ]);
+        $eventC = new DefaultCalendarEvent(333, $this->events[333]);
+
+        $this->collection->add($eventA)->add($eventB)->add($eventC);
+        $this->assertEquals($eventA, $this->collection->get('ID_prefix_111'));
+        $this->assertEquals($eventB, $this->collection->get('another_prefix_222'));
+        $this->assertEquals($eventC, $this->collection->get(333));
+    }
+
+    /**
      * Test to remove events from the collection (by object and by identifier)
      */
     public function testCanRemoveEventFromCollection()
