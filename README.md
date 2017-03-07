@@ -46,17 +46,17 @@ Below you can see a basic example configuration file :
 
             'calendar' => [
 
-                // calendars (optional)
+                // calendar aliases (optional)
                 'calendars' => [
                     'MyCalendar' => My\Calendar\ClassName::class
                 ],
 
-                // calendar event sources (mandatory)
+                // calendar event source aliases (optional)
                 'sources' => [
                     'MySource' => My\Source\ClassName::class
                 ],
 
-                // source events (mandatory)
+                // source event aliases (optional)
                 'events' => [
                     'MyEvent' => My\Event\ClassName::class
                 ],

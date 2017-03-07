@@ -12,12 +12,12 @@ return [
                 'MyCalendar' => My\Calendar\ClassName::class
             ],
 
-            // calendar event sources (mandatory)
+            // calendar event source aliases (optional)
             'sources' => [
                 'MySource' => My\Source\ClassName::class
             ],
 
-            // Source events (mandatory)
+            // Source event aliases (optional)
             'events' => [
                 'MyEvent' => My\Event\ClassName::class
             ],

@@ -2,8 +2,6 @@
 
 namespace Elchristo\Calendar\Service\Config;
 
-use Elchristo\Calendar\Exception\RuntimeException;
-
 /**
  * Service who provides access to calendar configuration
  */
@@ -57,11 +55,13 @@ class Config
      */
     public function getRegisteredSources()
     {
-        if (!\array_key_exists(self::CONFIG_KEY_SOURCES, $this->config)) {
-            throw new RuntimeException(\sprintf('Missing configuration key "%s".', self::CONFIG_KEY_SOURCES));
+        if (!\array_key_exists(self::CONFIG_KEY_SOURCES, $this->config)
+            || !\is_array($this->config[self::CONFIG_KEY_SOURCES])
+        ) {
+            return [];
         }
 
-        return (array) $this->config[self::CONFIG_KEY_SOURCES];
+        return $this->config[self::CONFIG_KEY_SOURCES];
     }
 
     /**
@@ -70,11 +70,13 @@ class Config
      */
     public function getRegisteredEvents()
     {
-        if (!\array_key_exists(self::CONFIG_KEY_EVENTS, $this->config)) {
-            throw new RuntimeException(\sprintf('Missing configuration key "%s".', self::CONFIG_KEY_EVENTS));
+        if (!\array_key_exists(self::CONFIG_KEY_EVENTS, $this->config)
+            || !\is_array($this->config[self::CONFIG_KEY_EVENTS])
+        ) {
+            return [];
         }
 
-        return (array) $this->config[self::CONFIG_KEY_EVENTS];
+        return $this->config[self::CONFIG_KEY_EVENTS];
     }
 
     /**
