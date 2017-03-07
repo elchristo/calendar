@@ -54,19 +54,21 @@ class ServiceContainer implements ContainerInterface
      */
     public function get($name)
     {
-        if ($name === 'config') {
+        $canonicalizeName = $this->canonicalizeName($name);
+
+        if ($canonicalizeName === 'config') {
             return $this->config;
-        } else if (isset($this->instances[$name])) {
-            return $this->instances[$name];
+        } else if (isset($this->instances[$canonicalizeName])) {
+            return $this->instances[$canonicalizeName];
         } elseif (true === $this->has($name)) {
             $factoryClassName = $this->factories[$name];
             $factory = new $factoryClassName();
 
-            $this->instances[$name] = $factory->__invoke($this);
-            return $this->instances[$name];
+            $this->instances[$canonicalizeName] = $factory->__invoke($this);
+            return $this->instances[$canonicalizeName];
         }
 
-        throw new \Exception("Service with name {$name} not found.");
+        throw new \Exception("Service with name {$name} ({$canonicalizeName}) not found.");
     }
 
     /**
@@ -83,5 +85,10 @@ class ServiceContainer implements ContainerInterface
     public function getConfig()
     {
         return $this->config;
+    }
+
+    private function canonicalizeName($name)
+    {
+        return \strtolower(\strtr($name, [ '-' => '', '_' => '', ' ' => '', '\\' => '', '/' => '' ]));
     }
 }

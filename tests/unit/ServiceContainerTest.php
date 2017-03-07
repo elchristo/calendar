@@ -58,4 +58,22 @@ class ServiceContainerTest extends TestCase
             'Missing declared factory ' . SourceBuilder::class
         );
     }
+
+    /**
+     * Test to retrieve calendar builder service from container
+     */
+    public function testGetCalendarBuilderFromContainer()
+    {
+        $serviceName = CalendarBuilder::class;
+        $this->assertInstanceOf($serviceName, $this->serviceContainer->get($serviceName), 'Missing declared factory ' . $serviceName);
+    }
+
+    /**
+     * Test to retrieve source builder service from container
+     */
+    public function testGetSourceBuilderFromContainer()
+    {
+        $serviceName = SourceBuilder::class;
+        $this->assertInstanceOf($serviceName, $this->serviceContainer->get($serviceName), 'Missing declared factory ' . $serviceName);
+    }
 }
