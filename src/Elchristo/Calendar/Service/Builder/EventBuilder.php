@@ -46,9 +46,10 @@ class EventBuilder
     }
 
     /**
-     * Build a new calendar event instance
+     * Build a new calendar event instance.
+     * If no class found by passed name (in configuration) an instance of DefaultCalendarEvent is returned as a fallback
      *
-     * @param string $name    Event name (in configuration)
+     * @param string $name    Event name (in configuration or classname)
      * @param array  $values  Event attribute values (name => value pairs)
      * @param array  $options Additional options passed to the event
      *
@@ -63,14 +64,15 @@ class EventBuilder
             $id = $this->generateEventId($name);
         }
 
-        if (!\array_key_exists($name, $this->registeredEvents)
-            || true !== \class_exists($this->registeredEvents[$name], true)
-        ) {
-            return new DefaultCalendarEvent($id, $values, $options);
+        if (\is_subclass_of($name, CalendarEventInterface::class) && \class_exists($name)) {
+            $event = new $name($id, $values, $options);
+        } else if (isset($this->registeredEvents[$name]) && true === \class_exists($this->registeredEvents[$name], \true)) {
+            $event = new $this->registeredEvents[$name]($id, $values, $options);
+        } else {
+            $event = new DefaultCalendarEvent($id, $values, $options);
         }
 
         // Apply color strategy
-        $event = new $this->registeredEvents[$name]($id, $values, $options);
         if ($event instanceof ColorStrategyAwareInterface) {
             if (isset($options['color_strategy'])) {
                 $this->injectColorStrategy($event, $options['color_strategy']);

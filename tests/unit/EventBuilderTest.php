@@ -29,7 +29,7 @@ class EventBuilderTest extends TestCase
      * Test to build a default calendar event by any name (not declared in configuration)
      * and check if it is initialized with all mandatory information
      */
-    public function testCanBuildMinimumDefaultCalendarEventByName()
+    public function testCanBuildDefaultCalendarEventByNotDeclaredName()
     {
         $configProvider = $this->getConfigProvider();
         $builder = EventBuilder::getInstance($configProvider);
@@ -45,10 +45,9 @@ class EventBuilderTest extends TestCase
     }
 
     /**
-     * Test to build a default calendar event by a name declared in configuration
-     * and check if it is initialized with all mandatory information
+     * Test to build a calendar event by a name declared in configuration
      */
-    public function testCanBuildDeclaredCalendarEvent()
+    public function testCanBuildEventByNameInConfig()
     {
         $configProvider = $this->getConfigProvider();
         $builder = EventBuilder::getInstance($configProvider);
@@ -59,6 +58,19 @@ class EventBuilderTest extends TestCase
         $event = $builder->build($eventName);
 
         $this->assertInstanceOf($registeredEvents[$eventName], $event);
+    }
+
+    /**
+     * Test to build a calendar event by its classname
+     */
+    public function testCanBuildEventByClassname()
+    {
+        $configProvider = $this->getConfigProvider();
+        $builder = EventBuilder::getInstance($configProvider);
+        $eventClassname = unit\Stub\TestEventBasic::class;
+        $event = $builder->build($eventClassname);
+
+        $this->assertInstanceOf($eventClassname, $event);
     }
 
     /**
