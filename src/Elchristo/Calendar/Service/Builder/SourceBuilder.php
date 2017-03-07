@@ -20,23 +20,27 @@ class SourceBuilder implements ConfigAwareInterface
     protected $sourceLocator;
 
     /**
-     * Factory method to build and initialize an new calendar events source
+     * Factory method to build and initialize a calendar events source
      *
-     * @param string $sourceName The name of the configured source to build
+     * @param string $sourceName The name of the configured source to build or its classname
      * @param array  $options    Additional source options
      *
      * @return mixed SourceInterface|null
      * @throws RuntimeException
      */
-    public function build($sourceName, array $options)
+    public function build($sourceName, array $options = [])
     {
         if (empty($sourceName)) {
             throw new InvalidArgumentException("Cannot build calendar source with invalid empty source name.");
         }
 
-        $fullClassName = $this->getSourceLocator()->getSourceClassName($sourceName);
-        if (false === $fullClassName || !\class_exists($fullClassName)) {
-            throw new RuntimeException(\sprintf("Calendar source width name '%s' (class name %s) was not declared in configuration or does not exist.", $sourceName, $fullClassName));
+        if (\class_exists($sourceName)) {
+            $fullClassName = $sourceName;
+        } else {
+            $fullClassName = $this->getSourceLocator()->getSourceClassName($sourceName);
+            if (false === $fullClassName || !\class_exists($fullClassName)) {
+                throw new RuntimeException(\sprintf("Calendar source width name '%s' (class name %s) was either not declared in configuration or does not exist.", $sourceName, $fullClassName));
+            }
         }
 
         // Create source instance

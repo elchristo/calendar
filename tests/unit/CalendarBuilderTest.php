@@ -86,28 +86,5 @@ class CalendarBuilderTest extends TestCase
         $calendar->addSource($sourceName, $sourceOptions);
         $source = $calendar->getSource($sourceName);
         $this->assertInstanceOf(SourceInterface::class, $source);
-
-        // validate collection of events
-        $eventsCollection = $source->getEvents();
-        $this->assertInstanceOf(Collection::class, $eventsCollection);
-
-        // validate number of events in events collection
-        $iterator = $eventsCollection->getIterator();
-        $this->assertCount(2, $eventsCollection->toArray());
-        $this->assertEquals(2, $eventsCollection->count());
-        $this->assertEquals(2, $iterator->count());
-
-        // test expected event property values
-        $event = $iterator->current();
-        $this->assertEquals($event->getId(), 123);
-        $this->assertEquals($event->getTitle(), 'long event title', 'Cannot read event property "title".');
-        $this->assertEquals($event->getTitleShort(), 'short title', 'Cannot read event property "titleShort".');
-        $this->assertEquals($event->getDescription(), 'this is the first event added to the calendar events source', 'Cannot read event property "description".');
-        $this->assertEquals($event->isAllDayEvent(), true, 'Event should be an allday event.');
-        $this->assertEquals($event->getStart()->format('dmY'), '03112017', 'Event has unexpected start date.');
-        $this->assertEquals($event->getEnd()->format('dmY'), '05112017', 'Event has unexpected end date.');
-
-        $event2 = $iterator->offsetGet(456);
-        $this->assertEquals($event2->getId(), 456);
     }
 }
