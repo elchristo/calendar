@@ -10,8 +10,6 @@ use Elchristo\Calendar\Model\CalendarInterface;
  */
 class Converter
 {
-    const DEFAULT_CONVERTER_NAMESPACE = __NAMESPACE__ . '\\';
-
     /** @var array Cached converter instances */
     private static $converters = [];
 
@@ -27,11 +25,13 @@ class Converter
      */
     public static function convert(CalendarInterface $calendar, $name, array $options = [])
     {
-        if (isset(self::$converters[$name])) {
-            $converter = self::$converters[$name];
+        $canonicalizeName = $this->canonicalizeName($name);
+
+        if (isset(self::$converters[$canonicalizeName])) {
+            $converter = self::$converters[$canonicalizeName];
         } else {
             // TODO allow configured namespaces
-            $className = self::DEFAULT_CONVERTER_NAMESPACE . \ucfirst($name) . '\\' . ucfirst($name);
+            $className = __NAMESPACE__ . '\\' . \ucfirst($name) . '\\' . ucfirst($name);
 
             if (true !== \class_exists($className, true)) {
                 throw new RuntimeException(\sprintf('Unknown converter with name "%s" resolving to %s.', $name, $className));
@@ -40,8 +40,14 @@ class Converter
             $config = $calendar->getConfig();
             $eventBuilder = new ConvertibleEventFactory($config->getRegisteredConverters());
             $converter = new $className($eventBuilder);
+            self::$converters[$canonicalizeName] = $converter;
         }
 
         return $converter->convert($calendar, $options);
+    }
+
+    private function canonicalizeName($name)
+    {
+        return \strtolower(\strtr($name, [ '-' => '', '_' => '', ' ' => '', '\\' => '', '/' => '' ]));
     }
 }
