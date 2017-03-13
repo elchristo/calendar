@@ -2,8 +2,6 @@
 
 namespace Elchristo\Calendar\Service\Config;
 
-use Elchristo\Calendar\Exception\RuntimeException;
-
 /**
  * Trait with methods to retrieve and inject calendar configuration
  */
@@ -19,7 +17,7 @@ trait ConfigProviderTrait
     public function getConfig()
     {
         if (!$this->config instanceof Config) {
-            throw new RuntimeException(\get_called_class() . ' has no mandatory calendar configuration which needs to be initialized.');
+            $this->config = new Config();
         }
 
         return $this->config;
