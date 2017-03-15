@@ -2,11 +2,14 @@
 
 namespace Elchristo\Calendar\Test;
 
-use Elchristo\Calendar\Service\Builder\EventBuilder;
 use Elchristo\Calendar\Converter\ConvertibleEventInterface;
 use Elchristo\Calendar\Converter\ConvertibleEventFactory;
 use Elchristo\Calendar\Converter\Ical\Event\AbstractIcalEvent;
+use Elchristo\Calendar\Model\Event\Collection;
 use Elchristo\Calendar\Service\Config\Config;
+use Elchristo\Calendar\Converter\Converter;
+use Elchristo\Calendar\Service\Builder\EventBuilder;
+use Elchristo\Calendar\Service\Builder\SourceBuilderFactory;
 
 class ConvertibleEventFactoryTest extends TestCase
 {
@@ -25,6 +28,30 @@ class ConvertibleEventFactoryTest extends TestCase
     {
         $configConverters = $this->getConfigProvider()->getRegisteredConverters();
         return new ConvertibleEventFactory($configConverters);
+    }
+
+    /**
+     * Test to convert a calendar into given converter classname
+     */
+    public function testCanConvertCalendarByGivenConverterClassname()
+    {
+        $config = $this->getConfigProvider();
+        $sourceBuilder = SourceBuilderFactory::create($config);
+        $calendar = new unit\Stub\TestCalendar($sourceBuilder, new Collection());
+        $json = Converter::convert($calendar, \Elchristo\Calendar\Converter\Json\Json::class);
+        $this->assertJson($json);
+    }
+
+    /**
+     * Test to convert a calendar into given converter name (in config)
+     */
+    public function testCanConvertCalendarByGivenConverterName()
+    {
+        $config = $this->getConfigProvider();
+        $sourceBuilder = SourceBuilderFactory::create($config);
+        $calendar = new unit\Stub\TestCalendar($sourceBuilder, new Collection());
+        $json = Converter::convert($calendar, 'json');
+        $this->assertJson($json);
     }
 
     /**
