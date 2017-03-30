@@ -34,6 +34,10 @@ class CalendarBuilder implements ConfigAwareInterface
             throw new InvalidArgumentException("Calendar name must not be empty.");
         }
 
+        if (!\is_string($name)) {
+            throw new InvalidArgumentException("Calendar name must be of type string.");
+        }
+
         $config = $this->getConfig();
         $registeredCalendars = $config->getRegisteredCalendars();
         $sourceBuilder = $this->getSourceBuilder();
