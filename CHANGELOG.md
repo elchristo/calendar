@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.0
+
+ - configuration keys ("sources", "events") are not mandatory anymore (53c0dd7)
+ - calendar builder configuration is now optional (0b741b8)
+ - event sources, calendar events and converters can now be created by passing a classname (c655dae d94da67 b0b296b)
+ - fix converter instances cache (0a2d598)
+ - improved handling of services by internal container (4348960)
+ - added and updated some unit tests
+ - update vendor dependencies (54526b1)
+ - update documentation
+
 ## 0.2.0
 
  - add unit tests (codeception)
