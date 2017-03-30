@@ -16,24 +16,26 @@ Furthermore you can convert built calendars easily into various output formats (
 
 ## Basic usage
 
-    // calendar builder
+    // calendar builder (passed configuration array is optional)
     $calendarBuilder = CalendarBuilderFactory::create($config); // for alternative service container implementation see full example below
     $calendar = $calendarBuilder->build('CalendarName');
-    $calendar->addSource('SourceName');
+    $calendar->addSource('SourceName'); // you can as well pass a source classname
     $events = $calendar->getEvents(); // gives you a traversable collection of calendar events
 
     // convert calendar into json
-    $json = Converter::convert($calendar, 'json');
+    $json = Converter::convert($calendar, 'json'); // instead you can pass a converter classname as second parameter
 
     // convert calendar into "iCalendar" format (RFC 2445, VCALENDAR)
-    $ics = Converter::convert($calendar, 'ical');
+    $ics = Converter::convert($calendar, 'ical'); // instead you can pass a converter classname as second parameter
 
 ## Full example
 
 ### Configuration
 
-First of all you need to create a library specific configuration.
+The optional configuration gives you the possibility to configure aliases for your own calendars,
+sources, events and converters as well self defined color strategies.
 This can either be included by using a file or your app configuration accessible by a service container.
+If no configuration is passed to the `CalendarBuilderFactory` an empty configuration is created internally.
 
 Below you can see a basic example configuration file :
 
