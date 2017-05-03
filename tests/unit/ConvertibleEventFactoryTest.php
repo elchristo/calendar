@@ -50,6 +50,7 @@ class ConvertibleEventFactoryTest extends TestCase
         $config = $this->getConfigProvider();
         $sourceBuilder = SourceBuilderFactory::create($config);
         $calendar = new unit\Stub\TestCalendar($sourceBuilder, new Collection());
+        $calendar->setConfig($config);
         $json = Converter::convert($calendar, 'json');
         $this->assertJson($json);
     }

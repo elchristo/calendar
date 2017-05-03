@@ -49,10 +49,18 @@ class Converter
         if (isset(self::$converters[$canonicalizeName])) {
             return $canonicalizeName;
         } else if (\is_subclass_of($name, ConverterInterface::class)) {
+            // passed classname
             if ($buildIfExists === \true) {
                 self::build($name, $convertibleEvents);
             }
             return $canonicalizeName;
+        } else if (\array_key_exists($name, $convertibleEvents) && \is_array($convertibleEvents[$name])) {
+            // converter name declared in configuration
+            $classname = \current($convertibleEvents[$name]);
+            if ($buildIfExists === \true) {
+                self::build($classname, $convertibleEvents);
+            }
+            return self::canonicalizeName($classname);
         } else {
             // lookup in default namespace
             $className = __NAMESPACE__ . '\\' . \ucfirst($name) . '\\' . \ucfirst($name);
