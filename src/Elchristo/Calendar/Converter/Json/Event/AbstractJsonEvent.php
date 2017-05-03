@@ -4,6 +4,7 @@ namespace Elchristo\Calendar\Converter\Json\Event;
 
 use Elchristo\Calendar\Model\Event\CalendarEventInterface;
 use Elchristo\Calendar\Converter\ConvertibleEventInterface;
+use Elchristo\Calendar\Model\Event\ColoredEventInterface;
 
 /**
  * Abstract Json calendar event
@@ -82,7 +83,7 @@ abstract class AbstractJsonEvent implements ConvertibleEventInterface
             'last_modified' => $this->event->getLastModificationDate()->getTimestamp(),
         ];
 
-        if ($this->event instanceof \Elchristo\Calendar\Model\Event\ColoredEventInterface) {
+        if ($this->event instanceof ColoredEventInterface) {
             $event['color'] = $this->event->getColorCode();
         }
 
