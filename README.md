@@ -63,12 +63,11 @@ Below you can see a basic example configuration file :
                     'MyEvent' => My\Event\ClassName::class
                 ],
 
-                // coverter strategies
+                // your own converter strategies (optional)
                 'converters' => [
-                    'Json' => [
-                        My\Event\ClassName::class => My\Converter\ClassName::class
+                    'MyJsonConverter' => [
+                        MyJsonConverter\Event\ClassName::class => MyJsonConverter\ClassName::class
                     ]
-
                 ],
 
                 // event color configuration
@@ -216,3 +215,24 @@ Example color strategy class implementation :
                 : '#ff0000';
         }
     }
+
+## Converter
+
+Once you have built your calendar with individual event sources
+you can easily transform the retrieved calendar events into various output formats.
+A converter allows you to convert an event into a new structure. These are called *convertible events*.
+
+The calendar component comes with build-in converters (json, ical) but you can as well
+create your own by using the `Elchristo\Calendar\Converter\AbstractConverter`
+which implements `Elchristo\Calendar\Converter\ConverterInterface`.
+In addition you need to create at least a default *convertible event* for your converter
+(implementing `Elchristo\Calendar\Converter\ConvertibleEventInterface`) to specify its structure.
+If your calendar contains events with different formats you can create a *convertible event* for each format.
+
+To avoid autoloading problems we recommend to respect the following directory structure and file naming convention :
+
+    MyConverter/MyConverter.php
+    MyConverter/Event/DefaultMyConverterEvent.php
+
+The converter and its *convertible events* must be declared in configuration file
+under the key `converters` (see configuration example).

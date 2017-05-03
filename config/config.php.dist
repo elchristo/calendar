@@ -22,12 +22,11 @@ return [
                 'MyEvent' => My\Event\ClassName::class
             ],
 
-            // Coverter strategies
+            // Converter and convertible events (optional)
             'converters' => [
-                'Json' => [
-                    My\Event\ClassName::class => My\Converter\ClassName::class
+                'MyConverter' => [
+                    MyConverter\Event\ClassName::class => MyConverter\ClassName::class
                 ]
-
             ],
 
             // Event color configuration
