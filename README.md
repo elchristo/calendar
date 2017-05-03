@@ -6,13 +6,20 @@ Furthermore you can convert built calendars easily into various output formats (
 # Table of Contents
 
  - Installation
+ - Tests
  - Basic usage
  - Full example
  - Options
+ - Converters
 
 ## Installation
 
     composer require elchristo/calendar
+
+## Tests
+
+    // to run tests with codeceptions
+    php5 ./vendor/bin/codecept run unit
 
 ## Basic usage
 
