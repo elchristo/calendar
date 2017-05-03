@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.1
+
+ - fix use of converter declared in configuration
+ - fix converter tests
+ - improve documentation (converters, ...)
+ - update vendor packages (composer.lock)
+
 ## 0.3.0
 
  - configuration keys ("sources", "events") are not mandatory anymore (53c0dd7)
