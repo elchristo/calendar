@@ -25,9 +25,14 @@ class ServiceContainerTest extends TestCase
      */
     public function testCanCreateSingletonInstance()
     {
-        $firstInstance = ServiceContainer::create(self::getConfig());
+        // given
+        $config = self::getConfig();
+
+        // when
+        $firstInstance = ServiceContainer::create($config);
         $secondInstance = ServiceContainer::create();
 
+        // then
         $this->assertInstanceOf(ServiceContainer::class, $firstInstance);
         $this->assertEquals($firstInstance, $secondInstance);
     }
@@ -37,8 +42,10 @@ class ServiceContainerTest extends TestCase
      */
     public function testHasValidConfig()
     {
+        // given
         $config = $this->serviceContainer->getConfig();
-        //$this->assertArrayHasKey('config', $config, 'Configuration needs root index "config"');
+
+        // then
         $this->assertArrayHasKey('elchristo', $config);
         $this->assertArrayHasKey('calendar', $config['elchristo']);
     }
@@ -48,13 +55,17 @@ class ServiceContainerTest extends TestCase
      */
     public function testContainsMandatoryFactories()
     {
+        // given
+        $serviceContainer = $this->serviceContainer;
+
+        // then
         $this->assertTrue(
-            $this->serviceContainer->has(CalendarBuilder::class),
+            $serviceContainer->has(CalendarBuilder::class),
             'Missing declared factory ' . CalendarBuilder::class
         );
 
         $this->assertTrue(
-            $this->serviceContainer->has(SourceBuilder::class),
+            $serviceContainer->has(SourceBuilder::class),
             'Missing declared factory ' . SourceBuilder::class
         );
     }
@@ -64,8 +75,14 @@ class ServiceContainerTest extends TestCase
      */
     public function testGetCalendarBuilderFromContainer()
     {
+        // given
         $serviceName = CalendarBuilder::class;
-        $this->assertInstanceOf($serviceName, $this->serviceContainer->get($serviceName), 'Missing declared factory ' . $serviceName);
+
+        // when
+        $service = $this->serviceContainer->get($serviceName);
+
+        // then
+        $this->assertInstanceOf($serviceName, $service, 'Missing declared factory ' . $serviceName);
     }
 
     /**
@@ -73,7 +90,13 @@ class ServiceContainerTest extends TestCase
      */
     public function testGetSourceBuilderFromContainer()
     {
+        // given
         $serviceName = SourceBuilder::class;
-        $this->assertInstanceOf($serviceName, $this->serviceContainer->get($serviceName), 'Missing declared factory ' . $serviceName);
+
+        // when
+        $service = $this->serviceContainer->get($serviceName);
+
+        // then
+        $this->assertInstanceOf($serviceName, $service, 'Missing declared factory ' . $serviceName);
     }
 }

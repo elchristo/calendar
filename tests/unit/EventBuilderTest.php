@@ -8,6 +8,9 @@ use Elchristo\Calendar\Model\Event\DefaultCalendarEvent;
 
 class EventBuilderTest extends TestCase
 {
+    /**
+     * @return Config Default calendar configuration for tests
+     */
     private function getConfigProvider()
     {
         return new Config(self::getConfig()['elchristo']['calendar']);
@@ -16,13 +19,17 @@ class EventBuilderTest extends TestCase
     /**
      * Test existance of mandatory event builder class attributes
      */
-    public function testEventBuilderClassAttributes()
+    public function testContainsMandatoryClassAttributes()
     {
-        $this->assertClassHasStaticAttribute('instance', EventBuilder::class);
-        $this->assertClassHasAttribute('configService', EventBuilder::class);
-        $this->assertClassHasAttribute('registeredEvents', EventBuilder::class);
-        $this->assertClassHasAttribute('registeredColors', EventBuilder::class);
-        $this->assertClassHasAttribute('registeredColorStrategies', EventBuilder::class);
+        // given
+        $eventBuilderClass = EventBuilder::class;
+
+        // then
+        $this->assertClassHasStaticAttribute('instance', $eventBuilderClass);
+        $this->assertClassHasAttribute('configService', $eventBuilderClass);
+        $this->assertClassHasAttribute('registeredEvents', $eventBuilderClass);
+        $this->assertClassHasAttribute('registeredColors', $eventBuilderClass);
+        $this->assertClassHasAttribute('registeredColorStrategies', $eventBuilderClass);
     }
 
     /**
@@ -31,10 +38,14 @@ class EventBuilderTest extends TestCase
      */
     public function testCanBuildDefaultCalendarEventByNotDeclaredName()
     {
+        // given
         $configProvider = $this->getConfigProvider();
         $builder = EventBuilder::getInstance($configProvider);
+
+        // when
         $event = $builder->build('SomeUndefinedCalendarEvent');
 
+        // then
         $this->assertInstanceOf(DefaultCalendarEvent::class, $event);
         $this->assertNotEmpty($event->getId(), 'Event identifier cannot be empty');
         $this->assertInstanceOf(\DateTime::class, $event->getStart());
@@ -49,14 +60,18 @@ class EventBuilderTest extends TestCase
      */
     public function testCanBuildEventByNameInConfig()
     {
+        // given
         $configProvider = $this->getConfigProvider();
         $builder = EventBuilder::getInstance($configProvider);
         $registeredEvents = $configProvider->getRegisteredEvents();
         $eventName = 'TestEventBasic';
         $eventNameInConfig = (isset($registeredEvents[$eventName])) ? $eventName : null;
-        $this->assertNotNull($eventNameInConfig, 'Event declaration missing in configuration');
+
+        // when
         $event = $builder->build($eventName);
 
+        // then
+        $this->assertNotNull($eventNameInConfig, 'Event declaration missing in configuration');
         $this->assertInstanceOf($registeredEvents[$eventName], $event);
     }
 
@@ -65,11 +80,15 @@ class EventBuilderTest extends TestCase
      */
     public function testCanBuildEventByClassname()
     {
+        // given
         $configProvider = $this->getConfigProvider();
         $builder = EventBuilder::getInstance($configProvider);
         $eventClassname = unit\Stub\TestEventBasic::class;
+
+        // when
         $event = $builder->build($eventClassname);
 
+        // then
         $this->assertInstanceOf($eventClassname, $event);
     }
 
@@ -79,22 +98,23 @@ class EventBuilderTest extends TestCase
      */
     public function testCanSetAndGetCalendarEventAttributes()
     {
+        // given
         $configProvider = $this->getConfigProvider();
         $builder = EventBuilder::getInstance($configProvider);
         $eventName = 'TestEventWithAttributes';
+
+        // when
         $event = $builder->build($eventName);
-
         $event->setAttributeA('value a');
-        $this->assertEquals($event->getAttributeA(), 'value a');
-
         $event->setAttributeB(array('1', '2', '3'));
-        $this->assertEquals($event->getAttributeB(), array('1', '2', '3'));
-
         $event->setAttributeC(123);
+        $event->setUndefinedAttribute('value for undefined attribute');
+
+        // then
+        $this->assertEquals($event->getAttributeA(), 'value a');
+        $this->assertEquals($event->getAttributeB(), array('1', '2', '3'));
         $this->assertEquals($event->getAttributeC(), 123);
         $this->assertInternalType('int', $event->getAttributeC());
-
-        $event->setUndefinedAttribute('value for undefined attribute');
         $this->assertNull($event->getUndefinedAttribute());
     }
 }

@@ -35,11 +35,17 @@ class ConvertibleEventFactoryTest extends TestCase
      */
     public function testCanConvertCalendarByGivenConverterClassname()
     {
+        // given
         $config = $this->getConfigProvider();
         $sourceBuilder = SourceBuilderFactory::create($config);
         $calendar = new unit\Stub\TestCalendar($sourceBuilder, new Collection());
-        $json = Converter::convert($calendar, \Elchristo\Calendar\Converter\Json\Json::class);
-        $this->assertJson($json);
+        $jsonConverterClassname = \Elchristo\Calendar\Converter\Json\Json::class;
+
+        // when
+        $expected = Converter::convert($calendar, $jsonConverterClassname);
+
+        // then
+        $this->assertJson($expected);
     }
 
     /**
@@ -47,12 +53,18 @@ class ConvertibleEventFactoryTest extends TestCase
      */
     public function testCanConvertCalendarByGivenConverterName()
     {
+        // given
         $config = $this->getConfigProvider();
         $sourceBuilder = SourceBuilderFactory::create($config);
         $calendar = new unit\Stub\TestCalendar($sourceBuilder, new Collection());
         $calendar->setConfig($config);
-        $json = Converter::convert($calendar, 'json');
-        $this->assertJson($json);
+        $jsonConverterName = 'json';
+
+        // when
+        $expected = Converter::convert($calendar, $jsonConverterName);
+
+        // then
+        $this->assertJson($expected);
     }
 
     /**
@@ -60,39 +72,60 @@ class ConvertibleEventFactoryTest extends TestCase
      */
     public function testCanCreateEventAndConvertItToJson()
     {
+        // given
         $configProvider = $this->getConfigProvider();
         $builder = EventBuilder::getInstance($configProvider);
         $event = $builder->build('SomeUndefinedCalendarEvent');
         $factory = $this->getFactory();
 
-        // json conversion
+        // when
         $jsonConverter = $factory->build($event, 'json');
+
+        // then
         $this->assertInstanceOf(ConvertibleEventInterface::class, $jsonConverter);
         $this->assertJson($jsonConverter->convert());
     }
 
     /**
-     * Test to build a convertible event and convert it to iCal
+     * Test to build a convertible ical event
      */
-    public function testCanCreateEventAndConvertItToIcal()
+    public function testCanBuildConvertibleIcalEvent()
     {
-        $summary = 'summary in special event attribut';
-        $statusInEventConverter = 'TENTATIVE';
+        // given
+        $builder = EventBuilder::getInstance($this->getConfigProvider());
+        $event = $builder->build('TestCalendarEventToBeConverted');
+        $event->setSpecialAttribute('summary in special event attribut');
 
-        $configProvider = $this->getConfigProvider();
-        $builder = EventBuilder::getInstance($configProvider);
+        // when
+        $iCalEventConverter = $this->getFactory()->build($event, 'ical');
+
+        // then
+        $this->assertInstanceOf(ConvertibleEventInterface::class, $iCalEventConverter);
+    }
+
+    /**
+     * Test to convert event into iCal string
+     */
+    public function testCanConvertCalendarEventToIcalString()
+    {
+        // given
+        $beginEvent = 'BEGIN:VEVENT';
+        $endEvent = 'END:VEVENT' . AbstractIcalEvent::CRLF;
+        $summary = 'SUMMARY:summary in special event attribut';
+        $statusInEventConverter = 'STATUS:TENTATIVE';
+
+        $builder = EventBuilder::getInstance($this->getConfigProvider());
         $event = $builder->build('TestCalendarEventToBeConverted');
         $event->setSpecialAttribute($summary);
 
-        // iCal event conversion
-        $factory = $this->getFactory();
-        $iCalEventConverter = $factory->build($event, 'ical');
-        $this->assertInstanceOf(ConvertibleEventInterface::class, $iCalEventConverter);
+        // when
+        $iCalEventConverter = $this->getFactory()->build($event, 'ical');
         $iCalEvent = $iCalEventConverter->convert();
 
-        $this->assertStringStartsWith('BEGIN:VEVENT', $iCalEvent);
-        $this->assertStringEndsWith('END:VEVENT' . AbstractIcalEvent::CRLF, $iCalEvent);
-        $this->assertContains('SUMMARY:' . $summary, $iCalEvent);
-        $this->assertContains('STATUS:' . $statusInEventConverter, $iCalEvent);
+        // then
+        $this->assertStringStartsWith($beginEvent, $iCalEvent);
+        $this->assertStringEndsWith($endEvent, $iCalEvent);
+        $this->assertContains($summary, $iCalEvent);
+        $this->assertContains($statusInEventConverter, $iCalEvent);
     }
 }

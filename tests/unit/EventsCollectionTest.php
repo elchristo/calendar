@@ -54,14 +54,14 @@ class EventsCollectionTest extends TestCase
      */
     public function testCanWriteInAndReadFromCollection()
     {
-        // create events
+        // given
         $eventA = new DefaultCalendarEvent(111, $this->events[111]);
         $eventB = new DefaultCalendarEvent(222, $this->events[222]);
         $eventC = new DefaultCalendarEvent(333, $this->events[333]);
         $eventD = new DefaultCalendarEvent(444, $this->events[444]);
         $eventE = new DefaultCalendarEvent(555, $this->events[555]);
 
-        // adding 5 events to the collection
+        // when
         $this->collection
             ->add($eventA)
             ->add($eventB)
@@ -70,7 +70,7 @@ class EventsCollectionTest extends TestCase
 
         $this->collection->set($eventE->getId(), $eventE);
 
-        // asserts
+        // then
         $eventAFromCollection = $this->collection->get(111);
         $this->assertEquals($this->events[111]['title'], $eventAFromCollection->getTitle());
         $this->assertEquals($this->events[111]['titleShort'], $eventAFromCollection->getTitleShort());
@@ -100,60 +100,103 @@ class EventsCollectionTest extends TestCase
      */
     public function testUseOptionEventIdentifierPrefix()
     {
+        // given
         $eventA = new DefaultCalendarEvent(111, $this->events[111], [ 'prefix_identifier' => 'ID_prefix_' ]);
         $eventB = new DefaultCalendarEvent(222, $this->events[222], [ 'prefix_identifier' => 'another_prefix_' ]);
         $eventC = new DefaultCalendarEvent(333, $this->events[333]);
 
+        // when
         $this->collection->add($eventA)->add($eventB)->add($eventC);
+
+        // then
         $this->assertEquals($eventA, $this->collection->get('ID_prefix_111'));
         $this->assertEquals($eventB, $this->collection->get('another_prefix_222'));
         $this->assertEquals($eventC, $this->collection->get(333));
     }
 
-    /**
-     * Test to remove events from the collection (by object and by identifier)
-     */
-    public function testCanRemoveEventFromCollection()
-    {
-        $eventA = new DefaultCalendarEvent(111, $this->events[111]);
-        $eventB = new DefaultCalendarEvent(222, $this->events[222]);
-        $this->collection->add($eventA)->add($eventB);
-
-        $this->assertTrue($this->collection->contains($eventA));
-        $this->assertTrue($this->collection->contains($eventB));
-
-        $this->collection->removeElement($eventA);
-        $this->assertFalse($this->collection->contains($eventA));
-        $this->collection->remove(222);
-        $this->assertFalse($this->collection->contains($eventB));
-    }
 
     /**
      * Test if a collection contains added event object
      */
-    public function testContainsAddedEvent()
+    public function testAddEventToCollection()
     {
+        // given
         $event = new DefaultCalendarEvent(111, $this->events[111]);
+
+        // when
         $this->collection->add($event);
+
+        // then
         $this->assertTrue($this->collection->contains($event));
     }
 
     /**
-     * Test if a collection contains added event objetc
+     * Test to remove events from the collection (by identifier)
      */
-    public function testCountNumberOfEventsInCollection()
+    public function testCanRemoveEventFromCollectionByIdentifier()
     {
+        // given
+        $event = new DefaultCalendarEvent(222, $this->events[222]);
+
+        // when
+        $this->collection->add($event);
+        $this->collection->remove(222);
+
+        // then
+        $this->assertFalse($this->collection->contains($event));
+    }
+
+        /**
+     * Test to remove events from the collection (by object)
+     */
+    public function testCanRemoveEventFromCollectionByObject()
+    {
+        // given
+        $event = new DefaultCalendarEvent(222, $this->events[222]);
+
+        // when
+        $this->collection->add($event);
+        $this->collection->removeElement($event);
+
+        // then
+        $this->assertFalse($this->collection->contains($event));
+    }
+
+    /**
+     * Test if a collection contains correct number of added events
+     */
+    public function testHasCorrectNumberOfEventsInCollection()
+    {
+        // given
         $eventA = new DefaultCalendarEvent(111, $this->events[111]);
-        $this->collection->add($eventA);
-        $this->assertTrue($this->collection->contains($eventA));
-        $this->assertCount(1, $this->collection);
-
         $eventB = new DefaultCalendarEvent(222, $this->events[222]);
-        $this->collection->add($eventB);
-        $this->assertCount(2, $this->collection);
-        $this->collection->add($eventB); // add same event again
-        $this->assertCount(2, $this->collection);
 
+        // when
+        $this->collection->add($eventA);
+        $this->collection->add($eventB);
+
+        // then
+        $this->assertCount(2, $this->collection);
+    }
+
+
+    /**
+     * Test thet we can add events multiple timpes without duplication
+     */
+    public function testHasCorrectNumberOfEventsIfAddedMultipleTimes()
+    {
+        // given
+        $eventA = new DefaultCalendarEvent(111, $this->events[111]);
+        $eventB = new DefaultCalendarEvent(222, $this->events[222]);
+
+        // when
+        $this->collection->add($eventA);
+        $this->collection->add($eventB);
+        $this->collection->add($eventB);
+        $this->collection->add($eventB);
+
+        // then
+        $this->assertCount(2, $this->collection);
     }
 
     /**
@@ -161,14 +204,15 @@ class EventsCollectionTest extends TestCase
      */
     public function testCanGetCollectionAsArray()
     {
-        // create events
+        // given
         $eventA = new DefaultCalendarEvent(111, $this->events[111]);
         $eventB = new DefaultCalendarEvent(666, $this->events[666]);
 
-        // adding 5 events to the collection
+        // when
         $this->collection->add($eventA)->add($eventB);
-
         $collAsArray = $this->collection->toArray();
+
+        // then
         $this->assertInternalType('array', $collAsArray);
         $this->assertArrayHasKey(111, $collAsArray);
         $this->assertArrayHasKey(666, $collAsArray);

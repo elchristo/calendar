@@ -18,12 +18,16 @@ class SourceBuilderTest extends TestCase
      */
     public function testBuildSourceByConfig()
     {
+        // given
         $builder = SourceBuilderFactory::create($this->getConfigProvider());
         $sourceName = 'TestSource'; // stub class unit\Stub\TestSource
+        $sourceInterface = SourceInterface::class;
 
-        // build source by name (in config)
+        // when
         $source = $builder->build($sourceName);
-        $this->assertInstanceOf(SourceInterface::class, $source, 'Cannot create source by name (in config).');
+
+        // then
+        $this->assertInstanceOf($sourceInterface, $source, 'Cannot create source by name (in config).');
     }
 
     /**
@@ -31,28 +35,49 @@ class SourceBuilderTest extends TestCase
      */
     public function testBuildSourceByClassname()
     {
+        // given
         $builder = SourceBuilderFactory::create($this->getConfigProvider());
         $sourceName = unit\Stub\TestSource::class;
+        $sourceInterface = SourceInterface::class;
 
-        // build source by classname
+        // when
         $source = $builder->build($sourceName);
-        $this->assertInstanceOf(SourceInterface::class, $source, 'Cannot create source by classname.');
+
+        // then
+        $this->assertInstanceOf($sourceInterface, $source, 'Cannot create source by classname.');
+    }
+
+        /**
+     * Test to retrieve event collection from source
+     */
+    public function testCanRetrieveEventsCollection()
+    {
+        // given
+        $builder = SourceBuilderFactory::create($this->getConfigProvider());
+        $source = $builder->build('TestSource'); // stub class unit\Stub\TestSource
+        $expected = Collection::class;
+
+        // when
+        $eventsCollection = $source->getEvents();
+
+        // then
+        $this->assertInstanceOf($expected, $eventsCollection);
     }
 
     /**
      * Test to retrieve event collection from source
      */
-    public function testRetrieveEventsFromSource()
+    public function testRetrieveEventsCollectionFromSource()
     {
+        // given
         $builder = SourceBuilderFactory::create($this->getConfigProvider());
         $source = $builder->build('TestSource'); // stub class unit\Stub\TestSource
-
-        // validate collection of events
         $eventsCollection = $source->getEvents();
-        $this->assertInstanceOf(Collection::class, $eventsCollection);
 
-        // validate number of events in events collection
+        // when
         $iterator = $eventsCollection->getIterator();
+
+        // then
         $this->assertCount(2, $eventsCollection->toArray());
         $this->assertEquals(2, $eventsCollection->count());
         $this->assertEquals(2, $iterator->count());
