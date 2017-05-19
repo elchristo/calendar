@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0
+
+ - add default methods to source interface (db726e4)
+ - some refactoring of tests (c20d8a0)
+ - remove PHP 5.5 support (9c13cfa)
+ - update some vendor dependencies
+
 ## 0.3.1
 
  - fix use of converter declared in configuration
