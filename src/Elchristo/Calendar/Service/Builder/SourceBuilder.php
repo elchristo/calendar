@@ -44,15 +44,14 @@ class SourceBuilder implements ConfigAwareInterface
         }
 
         // Create source instance
-        $source = new $fullClassName($sourceName);
+        $source = new $fullClassName($sourceName, $options);
 
         if (true !== $source instanceof SourceInterface) {
             throw new RuntimeException(\sprintf("Declared calendar source '%s' needs to implement %s.", $sourceName, SourceInterface::class));
         }
 
         $eventBuilder = EventBuilder::getInstance($this->getSourceLocator()->getConfig());
-        $source->setOptions($options)
-               ->setEventBuilder($eventBuilder);
+        $source->setEventBuilder($eventBuilder);
 
         return $source;
     }

@@ -28,9 +28,13 @@ abstract class AbstractSource implements SourceInterface
     /** @var EventBuilder Events factory instance */
     protected $eventBuilder;
 
-    public function __construct()
+    /** @var array */
+    private $canonicalizeChars = [ '-' => '', '_' => '', ' ' => '', '\\' => '', '/' => '' ];
+
+    public function __construct($identifier = null, array $options = [])
     {
-        $this->initIdentifier();
+        $this->initIdentifier($identifier);
+        $this->options = $options;
         $this->eventsCollection = new EventsCollection();
     }
 
@@ -42,14 +46,20 @@ abstract class AbstractSource implements SourceInterface
     /**
      * Initialize the unique identifier of the events source
      *
+     * @param mixed $identifier
      * @return mixed string|int
      */
-    private function initIdentifier()
+    private function initIdentifier($identifier)
     {
         $class = \get_called_class();
-        $this->identifier = (\defined("{$class}::IDENTIFIER"))
-            ? $class::IDENTIFIER
-            : \strtolower(\str_replace('\\', '', $class));
+
+        if (\is_string($identifier) && !empty($identifier)) {
+            $this->identifier = \strtolower(\strtr($identifier, $this->canonicalizeChars));
+        } else if (\defined("{$class}::IDENTIFIER")) {
+            $this->identifier = $class::IDENTIFIER;
+        } else {
+            $this->identifier = \strtolower(\strtr($class, $this->canonicalizeChars));
+        }
     }
 
     /**
@@ -90,17 +100,6 @@ abstract class AbstractSource implements SourceInterface
     public function getFetchedResults()
     {
         return $this->fetchedResults;
-    }
-
-    /**
-     * Setter for source options
-     *
-     * @param array $options
-     */
-    public function setOptions(array $options)
-    {
-        $this->options = $options;
-        return $this;
     }
 
     /**
