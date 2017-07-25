@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.0
+
+ - Fix phpunit version in composer.json for compatibity reasons and upgrade vendor dependencies (6ddf01c)
+ - Improved source identifier generation and added corresponding unit tests (8187133 d632375)
+
 ## 0.4.0
 
  - add default methods to source interface (db726e4)
