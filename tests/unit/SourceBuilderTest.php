@@ -47,6 +47,40 @@ class SourceBuilderTest extends TestCase
         $this->assertInstanceOf($sourceInterface, $source, 'Cannot create source by classname.');
     }
 
+    /**
+     * Test to initialize source identifier by configured name
+     */
+    public function testBuildSourceIdentifierWithPassedName()
+    {
+        // given
+        $builder = SourceBuilderFactory::create($this->getConfigProvider());
+        $sourceName = 'TestSource';
+        $expectedName = 'testsource';
+
+        // when
+        $source = $builder->build($sourceName);
+
+        // then
+        $this->assertEquals($expectedName, $source->getIdentifier());
+    }
+
+    /**
+     * Test to initialize source identifier by configured name
+     */
+    public function testBuildSourceIdentifierWithSourceClassname()
+    {
+        // given
+        $builder = SourceBuilderFactory::create($this->getConfigProvider());
+        $sourceName = unit\Stub\TestSource::class;
+        $expectedName = 'elchristocalendartestunitstubtestsource';
+
+        // when
+        $source = $builder->build($sourceName);
+
+        // then
+        $this->assertEquals($expectedName, $source->getIdentifier());
+    }
+
         /**
      * Test to retrieve event collection from source
      */
