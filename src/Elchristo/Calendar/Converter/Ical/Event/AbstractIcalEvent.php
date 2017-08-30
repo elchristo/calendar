@@ -58,7 +58,7 @@ abstract class AbstractIcalEvent implements ConvertibleEventInterface
     /** @var string optional unique identifier (UID) prefix */
     private $uidPrefix;
 
-    /** @var string Additional options */
+    /** @var array Additional options */
     protected $options = [];
 
     /**

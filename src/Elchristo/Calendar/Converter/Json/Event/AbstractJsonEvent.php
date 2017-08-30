@@ -14,7 +14,7 @@ abstract class AbstractJsonEvent implements ConvertibleEventInterface
     /** @var CalendarEventInterface Calendar event to be converted */
     protected $event;
 
-    /** @var string Additional converter options */
+    /** @var array Additional converter options */
     protected $options = [];
 
     /**
