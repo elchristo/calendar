@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0
+
+ - add converter for "FullCalendar" events (see https://github.com/fullcalendar/fullcalendar)
+ - fix psr-4 autoloading declaration and some phpdoc
+ - upgrade vendor dependencies
+
 ## 0.5.0
 
  - Fix phpunit version in composer.json for compatibity reasons and upgrade vendor dependencies (6ddf01c)
