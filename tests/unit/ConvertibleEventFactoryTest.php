@@ -94,7 +94,6 @@ class ConvertibleEventFactoryTest extends TestCase
         // given
         $builder = EventBuilder::getInstance($this->getConfigProvider());
         $event = $builder->build('TestCalendarEventToBeConverted');
-        $event->setSpecialAttribute('summary in special event attribut');
 
         // when
         $iCalEventConverter = $this->getFactory()->build($event, 'ical');
@@ -127,5 +126,144 @@ class ConvertibleEventFactoryTest extends TestCase
         $this->assertStringEndsWith($endEvent, $iCalEvent);
         $this->assertContains($summary, $iCalEvent);
         $this->assertContains($statusInEventConverter, $iCalEvent);
+    }
+
+    /**
+     * Test to build a convertible event and convert it into FullCalendar JSON format
+     */
+    public function testCanCreateEventAndConvertItToFullCalendarJson()
+    {
+        // given
+        $configProvider = $this->getConfigProvider();
+        $builder = EventBuilder::getInstance($configProvider);
+        $event = $builder->build('SomeCalendarEventForFullCalendarConversionTest');
+        $factory = $this->getFactory();
+
+        // when
+        $fcConverter = $factory->build($event, 'FullCalendar');
+
+        // then
+        $this->assertInstanceOf(ConvertibleEventInterface::class, $fcConverter);
+        $this->assertJson($fcConverter->convert());
+    }
+
+
+    /**
+     * Test to build a convertible FullCalendar event
+     */
+    public function testCanBuildConvertibleFullCalendarEvent()
+    {
+        // given
+        $builder = EventBuilder::getInstance($this->getConfigProvider());
+        $event = $builder->build('TestCalendarFcEventToBeConverted');
+        $description = 'fullcalendar event description.';
+        $event->setDescription($description);
+
+        // when
+        $fullcalendarEventConverter = $this->getFactory()->build($event, 'FullCalendar');
+
+        // then
+        $this->assertInstanceOf(ConvertibleEventInterface::class, $fullcalendarEventConverter);
+    }
+
+    /**
+     * Test to convert event into FullCalendar event with correct attribute values
+     */
+    public function testCanConvertIntoFullCalendarEventContainingCorrectAttributeValues()
+    {
+        // given
+        $expectedTitle = 'fullcalendar event title.';
+        $expectedDescription = 'fullcalendar event description.';
+
+        $builder = EventBuilder::getInstance($this->getConfigProvider());
+        $event = $builder->build('TestCalendarEventToBeConvertedIntoFullCalendarJson');
+        $event
+            ->setTitle($expectedTitle)
+            ->setDescription($expectedDescription);
+
+        // when
+        $fullCalendarEventConverter = $this->getFactory()->build($event, 'FullCalendar');
+        $fullCalendarJson = $fullCalendarEventConverter->convert();
+
+        // then
+        $this->assertContains($expectedTitle, $fullCalendarJson);
+        $this->assertContains($expectedDescription, $fullCalendarJson);
+    }
+
+    /**
+     * Test to convert event into FullCalendar event with all its specific attributes
+     */
+    public function testCreatedFullCalendarEventContainsAllAttributes()
+    {
+        // given
+        $expectedAttributes = [
+            'id', 'idBySource', 'title', 'titleDetails', 'published', 'description', 'start', 'end', 'allDay', 'editable'
+        ];
+
+        $builder = EventBuilder::getInstance($this->getConfigProvider());
+        $event = $builder->build('TestCalendarEventToBeConvertedIntoFullCalendarJson');
+
+        // when
+        $fullCalendarEventConverter = $this->getFactory()->build($event, 'FullCalendar');
+        $fullCalendarJson = $fullCalendarEventConverter->convert();
+
+        // then
+        $eventAsArray = \json_decode($fullCalendarJson, true);
+        foreach ($expectedAttributes as $attr) {
+            $this->assertArrayHasKey($attr, $eventAsArray);
+        }
+    }
+
+    /**
+     * Test to convert event into FullCalendar event with correct ISO datetime format
+     */
+    public function testCreatedFullCalendarEventHasCorrectIsoStartAndEndDate()
+    {
+        // given
+        $expectedIsoDatetimePattern = '/^([1-9]\d{3})-(\d{2})-(\d{2})T(\d{2})\:(\d{2})\:(\d{2})$/'; // Y-m-d\TH:i:s
+        $builder = EventBuilder::getInstance($this->getConfigProvider());
+        $eventWithoutStartAndEnd = $builder->build('TestCalendarEventWithoutStartAndEnd');
+        $eventWithStartAndEnd = $builder->build('TestCalendarEventWithStartAndEnd');
+
+        $start = \DateTime::createFromFormat('YmdHi', '201708310915');
+        $end = \DateTime::createFromFormat('YmdHi', '201708312200');
+        $eventWithStartAndEnd
+            ->setStart($start)
+            ->setEnd($end);
+
+        // when
+        $fullCalendarEventConverter = $this->getFactory()->build($eventWithoutStartAndEnd, 'FullCalendar');
+        $fullCalendarJson = $fullCalendarEventConverter->convert();
+        $fullCalendarEventConverter2 = $this->getFactory()->build($eventWithStartAndEnd, 'FullCalendar');
+        $fullCalendarJson2 = $fullCalendarEventConverter2->convert();
+
+        // then
+        $eventAsArray = \json_decode($fullCalendarJson, true);
+        $this->assertRegExp($expectedIsoDatetimePattern, $eventAsArray['start']);
+        $this->assertRegExp($expectedIsoDatetimePattern, $eventAsArray['end']);
+
+        $eventAsArray = \json_decode($fullCalendarJson2, true);
+        $this->assertRegExp($expectedIsoDatetimePattern, $eventAsArray['start']);
+        $this->assertEquals('2017-08-31T09:15:00', $eventAsArray['start']);
+        $this->assertRegExp($expectedIsoDatetimePattern, $eventAsArray['end']);
+        $this->assertEquals('2017-08-31T22:00:00', $eventAsArray['end']);
+    }
+
+    /**
+     * Test to convert event into FullCalendar event with default "allDay" value FALSE
+     */
+    public function testCreatedFullCalendarEventWithDefaultAllDayValueFalseWhenNoStartAndEndSpecified()
+    {
+        // given
+        $builder = EventBuilder::getInstance($this->getConfigProvider());
+        $event = $builder->build('TestCalendarEventToBeConvertedIntoFullCalendarJson');
+
+        // when
+        $fullCalendarEventConverter = $this->getFactory()->build($event, 'FullCalendar');
+        $fullCalendarJson = $fullCalendarEventConverter->convert();
+
+        // then
+        $eventAsArray = \json_decode($fullCalendarJson, true);
+        $this->assertFalse($eventAsArray['allDay']);
     }
 }
