@@ -46,7 +46,7 @@ class TestSource extends AbstractSource
         $options = $this->getOptions();
 
         foreach ($results as $result) :
-            $event = $eventsBuilder->build('TestEvent', $result, $options);
+            $event = $eventsBuilder->build('TestCalendarEvent', $result, $options);
             $eventsCollection->add($event);
         endforeach;
 

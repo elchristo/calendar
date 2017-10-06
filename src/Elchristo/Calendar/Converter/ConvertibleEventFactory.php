@@ -27,7 +27,7 @@ class ConvertibleEventFactory
      * @param string                 $format Output format
      * @return ConvertibleEventInterface
      */
-    public function build(CalendarEventInterface $event, $format)
+    public function build(CalendarEventInterface $event, string $format)
     {
         $key = \get_class($event);
         $name = \ucfirst($format);

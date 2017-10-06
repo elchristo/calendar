@@ -4,30 +4,29 @@ namespace Elchristo\Calendar\Service;
 
 use Elchristo\Calendar\Exception\RuntimeException;
 use Elchristo\Calendar\Model\Source\SourceInterface;
-use Elchristo\Calendar\Service\Config\ConfigAwareInterface;
-use Elchristo\Calendar\Service\Config\ConfigProviderTrait;
+use Interop\Container\ContainerInterface;
 
 /**
- * Class to locate configured event sources
+ * Class to locate calendar event sources (service container facade)
  */
-class SourceLocator implements ConfigAwareInterface
+class SourceLocator
 {
-    use ConfigProviderTrait;
+    /** @var ContainerInterface */
+    protected $container = null;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
 
     /**
-     * Find the name of the class source (declared in configuration)
      *
-     * @param string $name The name of the configured source
-     * @return mixed string|false
+     * @param string $name
+     * @return bool
      */
-    public function getSourceClassName($name)
+    public function has($name)
     {
-        if ($this->isRegisteredSource($name)) {
-            $registeredSources = $this->getConfig()->getRegisteredSources();
-            $className = $registeredSources[$name];
-        }
-
-        return !empty($className) ? $className : false;
+        return $this->container->has($name);
     }
 
     /**
@@ -39,22 +38,33 @@ class SourceLocator implements ConfigAwareInterface
      */
     public function get($name)
     {
-        if (!$this->isRegisteredSource($name)) {
+        if (!$this->isValidSource($name)) {
             throw new RuntimeException("Calendar source with name {$name} has not been declared in configuration.");
         }
 
-        return $this->getServiceLocator()->get($name);
+        return $this->container->get($name);
+    }
+
+    /**
+     *
+     * @param string $name
+     * @param array  $options
+     * @return SourceInterface
+     */
+    public function build($name, array $options = [])
+    {
+        return $this->container->build($name, $options);
     }
 
     /**
      * Test whether a source has been declared in configuration
      *
-     * @param string $name The name of the source to look for
+     * @param string $name The (class)name of the source to verify
      * @return boolean
      */
-    protected function isRegisteredSource($name)
+    protected function isValidSource($name)
     {
-        $registeredSources = $this->getConfig()->getRegisteredSources();
-        return \array_key_exists($name, $registeredSources);
+        return ($this->container->has($name) && \is_subclass_of($this->container->get($name), SourceInterface::class))
+            || (\class_exists($name) && \is_subclass_of($name, SourceInterface::class));
     }
 }

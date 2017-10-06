@@ -143,11 +143,9 @@ abstract class AbstractSource implements SourceInterface
      *
      * @return self
      */
-    final public function addCriteria($criteria)
+    final public function addCriteria(array $criteria)
     {
-        if (\is_array($criteria)) {
-            $this->options['criteria'] = ArrayUtils::merge($this->getCriteria(), $criteria);
-        }
+        $this->options['criteria'] = ArrayUtils::merge($this->getCriteria(), $criteria);
 
         return $this;
     }

@@ -22,7 +22,7 @@ interface CalendarInterface
      * @param string $name
      * @return CalendarInterface
      */
-    public function setName($name);
+    public function setName(string $name);
 
     /**
      * Calculate and return all events of all event sources attached to the calendar
@@ -46,5 +46,5 @@ interface CalendarInterface
      *
      * @return CalendarInterface
      */
-    public function addSource($name, array $options);
+    public function addSource(string $name, array $options);
 }

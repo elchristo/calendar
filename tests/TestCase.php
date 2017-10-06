@@ -2,6 +2,8 @@
 
 namespace Elchristo\Calendar\Test;
 
+use Zend\ServiceManager\ServiceManager;
+
 /**
  * Base class for all unit tests
  */
@@ -11,6 +13,8 @@ abstract class TestCase extends \Codeception\Test\Unit
     protected $tester;
 
     public static $config = null;
+
+    public static $serviceContainer = null;
 
     protected function _before()
     {
@@ -27,9 +31,25 @@ abstract class TestCase extends \Codeception\Test\Unit
     public static function getConfig()
     {
         if (self::$config === null) {
-            self::$config = require(__DIR__ . '/_data/config.php');
+            self::$config = \array_merge_recursive(
+                require(__DIR__ . '/_data/services.config.php'),
+                require(__DIR__ . '/_data/config.php')
+            );
         }
 
         return self::$config;
+    }
+
+    /**
+     *
+     * @return \Interop\Container\ContainerInterface
+     */
+    public static function getServiceContainer()
+    {
+        if (self::$serviceContainer === null) {
+            self::$serviceContainer = new ServiceManager(self::getConfig());
+        }
+
+        return self::$serviceContainer;
     }
 }

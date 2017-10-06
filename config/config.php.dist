@@ -7,21 +7,6 @@ return [
 
         'calendar' => [
 
-            // calendars (optional)
-            'calendars' => [
-                'MyCalendar' => My\Calendar\ClassName::class
-            ],
-
-            // calendar event source aliases (optional)
-            'sources' => [
-                'MySource' => My\Source\ClassName::class
-            ],
-
-            // Source event aliases (optional)
-            'events' => [
-                'MyEvent' => My\Event\ClassName::class
-            ],
-
             // Converter and convertible events (optional)
             'converters' => [
                 'MyConverter' => [

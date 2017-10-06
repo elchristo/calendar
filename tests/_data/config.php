@@ -9,18 +9,6 @@ namespace Elchristo\Calendar\Test\unit\Stub;
 $config = [
     'elchristo' => [
         'calendar' => [
-            'calendars' => [
-                'TestCalendar' => TestCalendar::class
-            ],
-            'sources' => [
-                'TestSource' => TestSource::class,
-                'TestFakerSource' => TestFakerSource::class
-            ],
-            'events' => [
-                'TestEventBasic' => TestEventBasic::class,
-                'TestEventWithAttributes' => TestEventWithAttributes::class,
-                'TestCalendarEventToBeConverted' => TestEventIcal::class,
-            ],
             'converters' => [
                 'Ical' => [
                     TestEventIcal::class => TestEventIcalConverter::class,

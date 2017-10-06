@@ -3,23 +3,25 @@
 namespace Elchristo\Calendar\Test;
 
 use Elchristo\Calendar\Service\Builder\CalendarBuilder;
-use Elchristo\Calendar\Service\Builder\CalendarBuilderFactory;
 use Elchristo\Calendar\Model\CalendarInterface;
+use Elchristo\Calendar\Model\DefaultCalendar;
 use Elchristo\Calendar\Service\Builder\SourceBuilder;
 use Elchristo\Calendar\Model\Source\SourceInterface;
 use Elchristo\Calendar\Model\Event\Collection;
+use Elchristo\Calendar\Test\unit\Stub\TestCalendar;
+use Elchristo\Calendar\Test\unit\Stub\TestSource;
 
 class CalendarBuilderTest extends TestCase
 {
-    /* @var $eventsCollection  Collection */
+    /* @var $eventsCollection Collection */
 
     /**
      * Test creation and initialization of calendar builder instance
      */
-    public function testCanCreateAndInitInstance()
+    public function testCanCreateAndInitCalendarBuilderInstance()
     {
         // given
-        $builder = CalendarBuilderFactory::create(self::getConfig());
+        $builder = self::getServiceContainer()->get(CalendarBuilder::class);
 
         // then
         $this->assertInstanceOf(CalendarBuilder::class, $builder);
@@ -29,38 +31,38 @@ class CalendarBuilderTest extends TestCase
     /**
      * Test to create a calendar which is not declared in configuration (default calendar instance expected)
      */
-    public function testBuildUndefinedCalendar()
+    public function testBuildDefaultCalendarByUndefinedName()
     {
         // given
-        $builder = CalendarBuilderFactory::create(self::getConfig());
+        $builder = self::getServiceContainer()->get(CalendarBuilder::class);
         $calendarName = 'NotConfiguredCalendarName';
-        $calendarInterface = CalendarInterface::class;
+        $expectedCalendarInterface = CalendarInterface::class;
+        $expectedCalendarClass = DefaultCalendar::class;
 
         // when
         $calendar = $builder->build($calendarName);
 
         // then
-        $this->assertInstanceOf($calendarInterface, $calendar);
+        $this->assertInstanceOf($expectedCalendarInterface, $calendar);
+        $this->assertInstanceOf($expectedCalendarClass, $calendar);
         $this->assertEquals($calendarName, $calendar->getName());
     }
 
     /**
      * Test to create calendar instance declared in config
      */
-    public function testBuildCalendarDeclaredInConfig()
+    public function testBuildCalendarDeclaredInContainer()
     {
         // given
-        $config = self::getConfig();
-        $builder = CalendarBuilderFactory::create($config);
-        $calendarNameInConfig = 'TestCalendar';
-        $calendarClassInConfig = $config['elchristo']['calendar']['calendars'][$calendarNameInConfig];
+        $builder = self::getServiceContainer()->get(CalendarBuilder::class);
+        $calendarNameInConfig = $expectedCalendarClassname = TestCalendar::class;
 
         // when
         $calendar = $builder->build($calendarNameInConfig);
 
         // then
         $this->assertInstanceOf(CalendarInterface::class, $calendar);
-        $this->assertEquals(\get_class($calendar), $calendarClassInConfig);
+        $this->assertEquals(\get_class($calendar), $expectedCalendarClassname);
         $this->assertEquals($calendarNameInConfig, $calendar->getName());
     }
 
@@ -70,14 +72,14 @@ class CalendarBuilderTest extends TestCase
     public function testGetSourceFromPreconfiguredCalendar()
     {
         // given
-        $builder = CalendarBuilderFactory::create(self::getConfig());
-        $calendarName = 'TestCalendar';
+        $builder = self::getServiceContainer()->get(CalendarBuilder::class);
+        $calendarName = TestCalendar::class;
 
         // when
         $calendar = $builder->build($calendarName);
 
         // then
-        $sourceName = 'TestSource';
+        $sourceName = TestSource::class;
         $this->assertTrue($calendar->hasSource($sourceName), "Calendar has no source with name {$sourceName}");
         $source = $calendar->getSource($sourceName);
         $this->assertInstanceOf(SourceInterface::class, $source);
@@ -91,10 +93,11 @@ class CalendarBuilderTest extends TestCase
     public function testCanAddKnownSourceToCalendar()
     {
         // given
-        $builder = CalendarBuilderFactory::create(self::getConfig());
+        $builder = self::getServiceContainer()->get(CalendarBuilder::class);
         $calendarName = 'SimpleDefaultCalendar';
-        $sourceName = 'TestSource';
+        $sourceName = TestSource::class;
         $sourceOptions = [];
+        $expectedInterface = SourceInterface::class;
 
         // when
         $calendar = $builder->build($calendarName);
@@ -102,6 +105,37 @@ class CalendarBuilderTest extends TestCase
         $source = $calendar->getSource($sourceName);
 
         // then
-        $this->assertInstanceOf(SourceInterface::class, $source);
+        $this->assertInstanceOf($expectedInterface, $source);
+    }
+
+    /**
+     * Test to add source with multiple options
+     */
+    public function testAddedSourceHasPassedOptions()
+    {
+        // given
+        $builder = self::getServiceContainer()->get(CalendarBuilder::class);
+        $calendarName = 'SimpleDefaultCalendarToTestSourceWithOptions';
+        $sourceName = TestSource::class;
+        $sourceOptionsToAdd = [
+            'option_string' => 'abc',
+            'option_int' => 12345,
+            'option_bool' => \true,
+            'option_object' => new \DateTime,
+            'option_array' => [
+                'a',
+                2,
+                new \DateTime
+            ]
+        ];
+
+        // when
+        $calendar = $builder->build($calendarName);
+        $calendar->addSource($sourceName, $sourceOptionsToAdd);
+        $source = $calendar->getSource($sourceName);
+        $options = $source->getOptions();
+
+        // then
+        $this->assertEquals($options, $sourceOptionsToAdd);
     }
 }

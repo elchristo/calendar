@@ -18,5 +18,5 @@ interface ColoredEventInterface
      *
      * @param string $colorCode
      */
-    public function setColorCode($colorCode);
+    public function setColorCode(string $colorCode);
 }

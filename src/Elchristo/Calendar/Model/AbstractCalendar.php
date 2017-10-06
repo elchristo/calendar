@@ -56,7 +56,7 @@ abstract class AbstractCalendar implements CalendarInterface, ConfigAwareInterfa
      * @param string $name New name for the calendar
      * @return self
      */
-    final public function setName($name)
+    final public function setName(string $name)
     {
         $this->name = $name;
         return $this;
@@ -79,7 +79,7 @@ abstract class AbstractCalendar implements CalendarInterface, ConfigAwareInterfa
      * @return AbstractSource
      * @throws RuntimeException
      */
-    final public function getSource($sourceName)
+    final public function getSource(string $sourceName)
     {
         if (!isset($this->sourceList[$sourceName])) {
             throw new RuntimeException(\sprintf("Calendar %s has no source of name %s", \get_called_class(), $sourceName));
@@ -119,7 +119,7 @@ abstract class AbstractCalendar implements CalendarInterface, ConfigAwareInterfa
      * @param string $name The name of the requested source
      * @return boolean
      */
-    final public function hasSource($name)
+    final public function hasSource(string $name): bool
     {
         return isset($this->sourceList[$name]);
     }
@@ -131,7 +131,7 @@ abstract class AbstractCalendar implements CalendarInterface, ConfigAwareInterfa
      * @param array  $options Source options
      * @return self
      */
-    final public function addSource($name, array $options = [])
+    final public function addSource(string $name, array $options = [])
     {
         $source = $this->getSourceBuilder()->build($name, $options);
         if (\is_object($source)) {

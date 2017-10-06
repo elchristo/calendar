@@ -2,11 +2,12 @@
 
 namespace Elchristo\Calendar\Service\Builder;
 
-use Elchristo\Calendar\Service\Config\Config;
 use Elchristo\Calendar\Model\Event\CalendarEventInterface;
 use Elchristo\Calendar\Model\Event\DefaultCalendarEvent;
 use Elchristo\Calendar\Service\Color\DefaultColorStrategy;
 use Elchristo\Calendar\Service\Color\ColorStrategyAwareInterface;
+use Interop\Container\ContainerInterface;
+use Elchristo\Calendar\Service\SourceLocator;
 
 /**
  * Class to build instances of calendar events
@@ -14,32 +15,28 @@ use Elchristo\Calendar\Service\Color\ColorStrategyAwareInterface;
 class EventBuilder
 {
     private static $instance = null;
-    private $configService;
-    private $registeredEvents;
-    private $registeredColors;
-    private $registeredColorStrategies;
+    private $sourceLocator;
+    private $eventColors = [];
 
     /**
-     * @param Config $config Calendar config
+     * @param ContainerInterface $sourceLocator
      */
-    private function __construct(Config $config)
+    private function __construct(SourceLocator $sourceLocator, array $options = [])
     {
-        $this->configService = $config;
-        $this->registeredEvents = $config->getRegisteredEvents();
-        $this->registeredColors = $config->getRegisteredColors();
-        $this->registeredColorStrategies = $config->getRegisteredColorStrategies();
+        $this->sourceLocator = $sourceLocator;
+        $this->eventColors = isset($options['event_colors']) && \is_array($options['event_colors']) ? $options['event_colors'] : [];
     }
 
     /**
      * Build or return singleton instance of the builder
      *
-     * @param Config $config
+     * @param SourceLocator $sourceLocator
      * @return EventBuilder
      */
-    public static function getInstance(Config $config)
+    public static function getInstance(SourceLocator $sourceLocator)
     {
         if (self::$instance === null) {
-            self::$instance = new self($config);
+            self::$instance = new self($sourceLocator);
         }
 
         return self::$instance;
@@ -64,13 +61,9 @@ class EventBuilder
             $id = $this->generateEventId($name);
         }
 
-        if (\is_subclass_of($name, CalendarEventInterface::class) && \class_exists($name)) {
-            $event = new $name($id, $values, $options);
-        } else if (isset($this->registeredEvents[$name]) && true === \class_exists($this->registeredEvents[$name], \true)) {
-            $event = new $this->registeredEvents[$name]($id, $values, $options);
-        } else {
-            $event = new DefaultCalendarEvent($id, $values, $options);
-        }
+        $event = (\is_subclass_of($name, CalendarEventInterface::class) && \class_exists($name))
+            ? new $name($id, $values, $options)
+            : new DefaultCalendarEvent($id, $values, $options);
 
         // Apply color strategy
         if ($event instanceof ColorStrategyAwareInterface) {
@@ -118,14 +111,12 @@ class EventBuilder
 
         $strategyName = $options['name'];
         $colorStrategy
-            = (\array_key_exists($strategyName, $this->registeredColorStrategies)
-                && \class_exists($this->registeredColorStrategies[$strategyName])
-            )
-                ? new $this->registeredColorStrategies[$strategyName]()
+            = ($this->sourceLocator->has($strategyName))
+                ? $this->sourceLocator->get($strategyName)
                 : new DefaultColorStrategy();
 
         $colorStrategy
-            ->setColorConfig($this->registeredColors)
+            ->setColorConfig($this->eventColors)
             ->setEvent($event);
 
         if (isset($options['attributes']) && \is_array($options['attributes'])) {

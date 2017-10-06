@@ -2,20 +2,13 @@
 
 namespace Elchristo\Calendar\Test;
 
-use Elchristo\Calendar\Service\Config\Config;
 use Elchristo\Calendar\Service\Builder\EventBuilder;
 use Elchristo\Calendar\Model\Event\DefaultCalendarEvent;
+use Elchristo\Calendar\Test\unit\Stub\TestEventBasic;
+use Elchristo\Calendar\Test\unit\Stub\TestEventWithAttributes;
 
 class EventBuilderTest extends TestCase
 {
-    /**
-     * @return Config Default calendar configuration for tests
-     */
-    private function getConfigProvider()
-    {
-        return new Config(self::getConfig()['elchristo']['calendar']);
-    }
-
     /**
      * Test existance of mandatory event builder class attributes
      */
@@ -26,24 +19,18 @@ class EventBuilderTest extends TestCase
 
         // then
         $this->assertClassHasStaticAttribute('instance', $eventBuilderClass);
-        $this->assertClassHasAttribute('configService', $eventBuilderClass);
-        $this->assertClassHasAttribute('registeredEvents', $eventBuilderClass);
-        $this->assertClassHasAttribute('registeredColors', $eventBuilderClass);
-        $this->assertClassHasAttribute('registeredColorStrategies', $eventBuilderClass);
     }
 
     /**
-     * Test to build a default calendar event by any name (not declared in configuration)
-     * and check if it is initialized with all mandatory information
+     * Test existance of mandatory attributes and values in default calendar event
      */
-    public function testCanBuildDefaultCalendarEventByNotDeclaredName()
+    public function testDerfaultCalendarEventContainsValidMandatoryAttributes()
     {
         // given
-        $configProvider = $this->getConfigProvider();
-        $builder = EventBuilder::getInstance($configProvider);
+        $eventName = DefaultCalendarEvent::class;
 
         // when
-        $event = $builder->build('SomeUndefinedCalendarEvent');
+        $event = self::getServiceContainer()->build($eventName);
 
         // then
         $this->assertInstanceOf(DefaultCalendarEvent::class, $event);
@@ -56,40 +43,36 @@ class EventBuilderTest extends TestCase
     }
 
     /**
-     * Test to build a calendar event by a name declared in configuration
+     * Test to build a default calendar event by any name (not declared as service in configuration)
      */
-    public function testCanBuildEventByNameInConfig()
+    public function testCanBuildValidDefaultCalendarEventByUndefinedName()
     {
         // given
-        $configProvider = $this->getConfigProvider();
-        $builder = EventBuilder::getInstance($configProvider);
-        $registeredEvents = $configProvider->getRegisteredEvents();
-        $eventName = 'TestEventBasic';
-        $eventNameInConfig = (isset($registeredEvents[$eventName])) ? $eventName : null;
+        $eventName = 'SomeUndefinedCalendarEvent'; // name must end with "CalendarEvent"
+        $eventName2 = 'DefaultCalendarEvent'; // name must end with "CalendarEvent"
 
         // when
-        $event = $builder->build($eventName);
+        $event = self::getServiceContainer()->build($eventName);
+        $event2 = self::getServiceContainer()->build($eventName2);
 
         // then
-        $this->assertNotNull($eventNameInConfig, 'Event declaration missing in configuration');
-        $this->assertInstanceOf($registeredEvents[$eventName], $event);
+        $this->assertInstanceOf(DefaultCalendarEvent::class, $event);
+        $this->assertInstanceOf(DefaultCalendarEvent::class, $event2);
     }
 
     /**
-     * Test to build a calendar event by its classname
+     * Test to build a calendar event by servicename declared in configuration
      */
-    public function testCanBuildEventByClassname()
+    public function testCanBuildEventByServiceName()
     {
         // given
-        $configProvider = $this->getConfigProvider();
-        $builder = EventBuilder::getInstance($configProvider);
-        $eventClassname = unit\Stub\TestEventBasic::class;
+        $eventClassName = TestEventBasic::class;
 
         // when
-        $event = $builder->build($eventClassname);
+        $event = self::getServiceContainer()->build($eventClassName);
 
         // then
-        $this->assertInstanceOf($eventClassname, $event);
+        $this->assertInstanceOf($eventClassName, $event, 'Event is not declared as service in configuration');
     }
 
     /**
@@ -99,12 +82,10 @@ class EventBuilderTest extends TestCase
     public function testCanSetAndGetCalendarEventAttributes()
     {
         // given
-        $configProvider = $this->getConfigProvider();
-        $builder = EventBuilder::getInstance($configProvider);
-        $eventName = 'TestEventWithAttributes';
+        $eventName = TestEventWithAttributes::class;
 
         // when
-        $event = $builder->build($eventName);
+        $event = self::getServiceContainer()->build($eventName);
         $event->setAttributeA('value a');
         $event->setAttributeB(array('1', '2', '3'));
         $event->setAttributeC(123);
