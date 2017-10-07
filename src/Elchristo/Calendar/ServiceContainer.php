@@ -10,6 +10,7 @@ use Elchristo\Calendar\Service\Builder\SourceBuilderFactory;
 
 /**
  * Service container to locate internal calendar services
+ * @deprecated 1.0 Container should be replaced by existing service container component in v2
  */
 class ServiceContainer implements ContainerInterface
 {
