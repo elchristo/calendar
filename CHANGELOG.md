@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0
+
+ - first stable release compatible PHP 5.6
+ - deprecated internal service container (preparation for v2) --> see issue #1
+
 ## 0.6.0
 
  - add converter for "FullCalendar" events (see https://github.com/fullcalendar/fullcalendar)
