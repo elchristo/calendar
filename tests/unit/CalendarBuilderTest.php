@@ -2,6 +2,7 @@
 
 namespace Elchristo\Calendar\Test;
 
+use Elchristo\Calendar\Exception\InvalidArgumentException;
 use Elchristo\Calendar\Service\Builder\CalendarBuilder;
 use Elchristo\Calendar\Model\CalendarInterface;
 use Elchristo\Calendar\Model\DefaultCalendar;
@@ -46,6 +47,20 @@ class CalendarBuilderTest extends TestCase
         $this->assertInstanceOf($expectedCalendarInterface, $calendar);
         $this->assertInstanceOf($expectedCalendarClass, $calendar);
         $this->assertEquals($calendarName, $calendar->getName());
+    }
+
+    /**
+     * Test expected Exception raised when trying to build calendar by classname not implementing CalendarInterface
+     */
+    public function testExpectedExceptionIsRaisedWhenTryingToBuildCalendarByInvalidClass()
+    {
+        // given
+        $builder = self::getServiceContainer()->get(CalendarBuilder::class);
+        $invalidCalendarClassname = \stdClass::class;
+        $this->expectException(InvalidArgumentException::class);
+
+        // when
+        $calendar = $builder->build($invalidCalendarClassname);
     }
 
     /**

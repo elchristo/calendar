@@ -23,14 +23,14 @@ class CalendarBuilder implements ConfigAwareInterface
     /**
      * Build a new calendar instance by name declared in configuration
      *
-     * @param string $calendarClassName The declared calendar class
+     * @param string $name The declared calendar class
      * @param array  $sources Associative array of calendar sources (eg. ['sourceA' => [options...]])
      *
      * @return CalendarInterface
      */
-    public function build($calendarClassName, array $sources = [])
+    public function build(string $name, array $sources = [])
     {
-        if (empty($calendarClassName)) {
+        if (empty($name)) {
             throw new InvalidArgumentException("Calendar name must not be empty.");
         }
 
@@ -38,15 +38,17 @@ class CalendarBuilder implements ConfigAwareInterface
         $sourceBuilder = $this->getSourceBuilder();
         $eventsCollection = new EventsCollection();
 
-        if (!\class_exists($calendarClassName) || !\is_subclass_of($calendarClassName, CalendarInterface::class)) {
+        if (\is_subclass_of($name, CalendarInterface::class)) {
+            $calendar = new $name($sourceBuilder, $eventsCollection);
+        } else if (!\class_exists($name)) {
             $calendar = new DefaultCalendar($sourceBuilder, $eventsCollection);
         } else {
-            $calendar = new $calendarClassName($sourceBuilder, $eventsCollection);
+            throw new InvalidArgumentException(\sprintf('Cannot create calendar by passed name "%s". Either a class implementing CalendarInterface or a string (not a class name) accepted.', $name));
         }
 
         $calendar
             ->setConfig($config)
-            ->setName($calendarClassName)
+            ->setName($name)
             ->init();
 
         if (!empty($sources)) {
