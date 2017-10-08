@@ -6,6 +6,9 @@ use Elchristo\Calendar\Service\Builder\EventBuilder;
 use Elchristo\Calendar\Model\Event\DefaultCalendarEvent;
 use Elchristo\Calendar\Test\unit\Stub\TestEventBasic;
 use Elchristo\Calendar\Test\unit\Stub\TestEventWithAttributes;
+use Elchristo\Calendar\Service\Color\DefaultColorStrategy;
+use Elchristo\Calendar\Service\Color\ColorStrategyInterface;
+use Elchristo\Calendar\Test\unit\Stub\TestColorStrategy;
 
 class EventBuilderTest extends TestCase
 {
@@ -97,5 +100,43 @@ class EventBuilderTest extends TestCase
         $this->assertEquals($event->getAttributeC(), 123);
         $this->assertInternalType('int', $event->getAttributeC());
         $this->assertNull($event->getUndefinedAttribute());
+    }
+
+    /**
+     * Test that event implementing ColoredEventInterface has DefaultColorStrategy by default
+     */
+    public function testThatEventImplementingColoredEventInterfaceHasDefaultColorStrategy()
+    {
+        // given
+        $eventName = TestEventBasic::class;
+        $expectedColorStrategy = DefaultColorStrategy::class;
+
+        // when
+        $event = self::getServiceContainer()->build($eventName);
+        $colorStrategy = $event->getColorStrategy();
+
+        // then
+        $this->assertInstanceOf($expectedColorStrategy, $colorStrategy, 'Event implements ColoredEventInterface but has no DefaultColorStrategy.');
+    }
+
+    /**
+     * Test that color strategy can be changed on an event implementing ColoredEventInterface
+     */
+    public function testCanChangeColorStrategyOnEventImplementingColoredEventInterface()
+    {
+        // given
+        $eventName = TestEventBasic::class;
+        $expectedColorStrategyInterface = ColorStrategyInterface::class;
+        $expectedColorStrategyAfterChange = TestColorStrategy::class;
+
+        // when
+        $event = self::getServiceContainer()->build($eventName);
+        $newColorStrategy = self::getServiceContainer()->get($expectedColorStrategyAfterChange);
+        $event->setColorStrategy($newColorStrategy);
+        $colorStrategy = $event->getColorStrategy();
+
+        // then
+        $this->assertInstanceOf($expectedColorStrategyInterface, $colorStrategy, "Event must implement {$expectedColorStrategyInterface}.");
+        $this->assertInstanceOf($expectedColorStrategyAfterChange, $colorStrategy, "Event should have color strategy {$expectedColorStrategyAfterChange}.");
     }
 }

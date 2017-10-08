@@ -2,10 +2,12 @@
 
 namespace Elchristo\Calendar\Model\Event;
 
+use Elchristo\Calendar\Service\Color\ColorStrategyAwareInterface;
+
 /**
  * Interface to be implemented by colored calendar events
  */
-interface ColoredEventInterface
+interface ColoredEventInterface extends ColorStrategyAwareInterface
 {
     /**
      * Return events color code

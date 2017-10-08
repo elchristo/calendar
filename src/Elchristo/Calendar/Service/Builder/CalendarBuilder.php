@@ -36,6 +36,7 @@ class CalendarBuilder implements ConfigAwareInterface
 
         $config = $this->getConfig();
         $sourceBuilder = $this->getSourceBuilder();
+        $sourceBuilder->setConfig($config);
         $eventsCollection = new EventsCollection();
 
         if (\is_subclass_of($name, CalendarInterface::class)) {

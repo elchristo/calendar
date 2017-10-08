@@ -6,12 +6,16 @@ use Elchristo\Calendar\Exception\RuntimeException;
 use Elchristo\Calendar\Exception\InvalidArgumentException;
 use Elchristo\Calendar\Model\Source\SourceInterface;
 use Elchristo\Calendar\Service\SourceLocator;
+use Elchristo\Calendar\Service\Config\ConfigAwareInterface;
+use Elchristo\Calendar\Service\Config\ConfigProviderTrait;
 
 /**
  * Class to build calendar event sources
  */
-class SourceBuilder
+class SourceBuilder implements ConfigAwareInterface
 {
+    use ConfigProviderTrait;
+
     /** @var SourceLocator */
     protected $sourceLocator;
 
@@ -42,7 +46,7 @@ class SourceBuilder
         // Create source instance
         $source = new $sourceClassName($sourceClassName, $options);
 
-        $eventBuilder = EventBuilder::getInstance($this->sourceLocator);
+        $eventBuilder = EventBuilder::getInstance($this->sourceLocator, $options);
         $source->setEventBuilder($eventBuilder);
 
         return $source;

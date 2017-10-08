@@ -2,6 +2,8 @@
 
 namespace Elchristo\Calendar\Test\unit\Stub;
 
+use Elchristo\Calendar\Test\unit\Stub\TestColorStrategy;
+
 /*
  * Configuration for unit tests
  */
@@ -12,6 +14,15 @@ $config = [
             'converters' => [
                 'Ical' => [
                     TestEventIcal::class => TestEventIcalConverter::class,
+                ]
+            ],
+
+            'colors' => [
+                'strategies' => [
+                    'MyFirstColorStrategyAlias' => TestColorStrategy::class,
+                    'MySecondColorStrategyAlias' => [
+                        'name' => TestColorStrategy::class
+                    ]
                 ]
             ]
         ]

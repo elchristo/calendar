@@ -93,7 +93,7 @@ abstract class AbstractColorStrategy implements ColorStrategyInterface
      * @param array $attributes
      * @return AbstractColorStrategy
      */
-    public function setAttributes($attributes)
+    public function setAttributes(array $attributes = [])
     {
         $this->attributes = $attributes;
         return $this;

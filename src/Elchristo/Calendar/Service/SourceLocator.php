@@ -20,6 +20,16 @@ class SourceLocator
     }
 
     /**
+     * Retrieve the service container
+     *
+     * @return ContainerInterface
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
+    /**
      *
      * @param string $name
      * @return bool

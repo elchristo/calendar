@@ -24,11 +24,12 @@ class AbstractEventFactory implements AbstractFactoryInterface
 
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null): CalendarEventInterface
     {
-        $sourceLocator = $container->get(SourceLocator::class);
-        $eventBuilder = EventBuilder::getInstance($sourceLocator);
         if (null === $options) {
             $options = [];
         }
+
+        $sourceLocator = $container->get(SourceLocator::class);
+        $eventBuilder = EventBuilder::getInstance($sourceLocator, $options);
 
         $attributes = [];
         if (isset($options['attributes']) && \is_array($options['attributes'])) {

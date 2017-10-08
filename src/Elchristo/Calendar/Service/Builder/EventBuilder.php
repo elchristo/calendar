@@ -5,7 +5,7 @@ namespace Elchristo\Calendar\Service\Builder;
 use Elchristo\Calendar\Model\Event\CalendarEventInterface;
 use Elchristo\Calendar\Model\Event\DefaultCalendarEvent;
 use Elchristo\Calendar\Service\Color\DefaultColorStrategy;
-use Elchristo\Calendar\Service\Color\ColorStrategyAwareInterface;
+use Elchristo\Calendar\Model\Event\ColoredEventInterface;
 use Interop\Container\ContainerInterface;
 use Elchristo\Calendar\Service\SourceLocator;
 
@@ -20,6 +20,7 @@ class EventBuilder
 
     /**
      * @param ContainerInterface $sourceLocator
+     * @param array              $options
      */
     private function __construct(SourceLocator $sourceLocator, array $options = [])
     {
@@ -31,12 +32,13 @@ class EventBuilder
      * Build or return singleton instance of the builder
      *
      * @param SourceLocator $sourceLocator
+     * @param array         $options
      * @return EventBuilder
      */
-    public static function getInstance(SourceLocator $sourceLocator)
+    public static function getInstance(SourceLocator $sourceLocator, array $options = [])
     {
         if (self::$instance === null) {
-            self::$instance = new self($sourceLocator);
+            self::$instance = new self($sourceLocator, $options);
         }
 
         return self::$instance;
@@ -66,12 +68,9 @@ class EventBuilder
             : new DefaultCalendarEvent($id, $values, $options);
 
         // Apply color strategy
-        if ($event instanceof ColorStrategyAwareInterface) {
-            if (isset($options['color_strategy'])) {
-                $this->injectColorStrategy($event, $options['color_strategy']);
-            } else {
-                \trigger_error(\sprintf('Missing option "color_strategy" in event builder options for "%s". Default color strategy will be applied.', \get_class($event)), \E_USER_NOTICE);
-            }
+        if ($event instanceof ColoredEventInterface) {
+            $colorStrategyOptions = (isset($options['color_strategy'])) ? $options['color_strategy'] : \null;
+            $this->initColorStrategy($event, $colorStrategyOptions);
         }
 
         return $event;
@@ -91,18 +90,18 @@ class EventBuilder
     /**
      * Injects color strategy (if declared in configuration by name), otherwise the default color strategy
      *
-     * @param CalendarEventInterface $event
-     * @param mixed[string|array]    $nameOrOptions
+     * @param CalendarEventInterface   $event
+     * @param mixed[string|array|null] $nameOrOptions
      * @return boolean
      */
-    private function injectColorStrategy($event, $nameOrOptions)
+    private function initColorStrategy($event, $nameOrOptions)
     {
         $options = (\is_string($nameOrOptions))
             ? [ 'name' => $nameOrOptions ]
             : $nameOrOptions;
 
         if (!\is_array($options)) {
-            \trigger_error(\sprintf('Passed color strategy options must be of type "array" for %s. Default color strategy will be applied.', \get_class($event)), \E_USER_NOTICE);
+            // Invalid or empty color strategy parameter passed, default color strategy will be initialized
             $options = [ 'name' => null ];
         } else if (!isset($options['name']) || !\is_string($options['name'])) {
             \trigger_error(\sprintf('Missing color strategy option "name" in event builder options for "%s". Default color strategy will be applied.', \get_class($event)), \E_USER_NOTICE);
@@ -111,9 +110,9 @@ class EventBuilder
 
         $strategyName = $options['name'];
         $colorStrategy
-            = ($this->sourceLocator->has($strategyName))
-                ? $this->sourceLocator->get($strategyName)
-                : new DefaultColorStrategy();
+            = ($this->sourceLocator->getContainer()->has($strategyName))
+                ? $this->sourceLocator->getContainer()->get($strategyName)
+                : $this->sourceLocator->getContainer()->get(DefaultColorStrategy::class);
 
         $colorStrategy
             ->setColorConfig($this->eventColors)

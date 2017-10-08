@@ -27,7 +27,10 @@ class CalendarBuilderFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = [];
+        $config = isset($options['elchristo']) && isset($options['elchristo']['calendar'])
+            ? $options['elchristo']['calendar']
+            : [];
+
         $builder = new CalendarBuilder();
         $builder
             ->setConfig(new Config($config))

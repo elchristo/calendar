@@ -11,12 +11,14 @@ use Elchristo\Calendar\Service\Builder\EventBuilder;
 use Elchristo\Calendar\Service\Config\Config;
 use Elchristo\Calendar\Service\Color\DefaultColorStrategy;
 use Elchristo\Calendar\Test\unit\Stub;
+use Elchristo\Calendar\Test\unit\Stub\TestColorStrategy;
 
 return [
     'invokables' => [
         Config::class,
         EventBuilder::class,
-        DefaultColorStrategy::class
+        DefaultColorStrategy::class,
+        TestColorStrategy::class,
     ],
     'factories' => [
         SourceLocator::class => SourceLocatorFactory::class,

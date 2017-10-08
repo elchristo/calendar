@@ -43,4 +43,15 @@ interface ColorStrategyInterface
      * @param ColoredEventInterface $event
      */
     public function setEvent(ColoredEventInterface $event);
+
+    /**
+     * @return array
+     */
+    public function getAttributes();
+
+    /**
+     *
+     * @param array $attributes
+     */
+    public function setAttributes(array $attributes = []);
 }
