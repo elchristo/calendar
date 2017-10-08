@@ -27,13 +27,13 @@ Furthermore you can convert built calendars easily into various output formats (
     $calendarBuilder = $serviceContainer->get(CalendarBuilder::class);
     $calendar = $calendarBuilder->build('SomeCalendarName');
     $calendar->addSource(SomeCalendarSource::class);
-    $events = $calendar->getEvents(); // gives you a traversable collection of calendar events
+    $events = $calendar->getEvents(); // retrieve traversable collection of calendar events
 
     // convert calendar into json
-    $json = Converter::convert($calendar, 'json'); // instead you can pass a converter classname as second parameter
+    $json = Converter::convert($calendar, 'json'); // second parameter can as well be a converter classname
 
     // convert calendar into "iCalendar" format (RFC 2445, VCALENDAR)
-    $ics = Converter::convert($calendar, 'ical'); // instead you can pass a converter classname as second parameter
+    $ics = Converter::convert($calendar, 'ical'); // second parameter can as well be a converter classname
 
     // convert calendar into "FullCalendar" JSON format (see https://github.com/fullcalendar/fullcalendar)
     $fcJson = Converter::convert($calendar, 'FullCalendar');
@@ -148,7 +148,7 @@ Example source class :
 Then use it to build an instance of your calendar and add any of your defined calendar sources.
 
     $calendar = $calendarBuilder->build('MyFirstCalendar');
-    // if no classe with passed calendar name can be found an empty default calendar named "MyFirstCalendar" is built
+    // if no class with passed calendar name can be found an empty default calendar named "MyFirstCalendar" is built
 
     $calendar
         ->addSource(SourceA::class)
@@ -236,4 +236,4 @@ under the key `converters` (see configuration example).
 ## Tests
 
     // to run tests with codeceptions
-    php5 ./vendor/bin/codecept run unit
+    php ./vendor/bin/codecept run unit
