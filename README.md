@@ -1,7 +1,7 @@
 # Calendar builder and converter
 
 `Calendar` is a PHP library to create custom calendars composed of self defined event sources.
-Furthermore you can convert built calendars easily into various output formats (eg. Json, iCalendar (ics), FullCalendar, ...).
+Created calendars can be easily converted into various output formats (eg. Json, iCalendar (ics), FullCalendar, ...).
 
 # Table of Contents
 
@@ -24,7 +24,8 @@ Furthermore you can convert built calendars easily into various output formats (
     $serviceContainer = new Zend\ServiceManager\ServiceManager($services);
 
     // (2) calendar builder
-    $calendarBuilder = $serviceContainer->get(CalendarBuilder::class);
+    $config = include 'config/config.php'; // optional config array (see configuration section below)
+    $calendarBuilder = $serviceContainer->build(CalendarBuilder::class, $config);
     $calendar = $calendarBuilder->build('SomeCalendarName');
     $calendar->addSource(SomeCalendarSource::class);
     $events = $calendar->getEvents(); // retrieve traversable collection of calendar events
@@ -141,7 +142,8 @@ Example source class :
     // solution 2 : using own ZF service manager
     // Important : you need to integrate the content of included services.config.php file into your app configuration
     $sm = $this->getServiceLocator();
-    $calendarBuilder = $sm->get(CalendarBuilder::class);
+    $config = include 'config/config.php'; // calendar config (converters, color strategies, ...)
+    $calendarBuilder = $sm->build(CalendarBuilder::class, $config);
 
 ### Build a calendar and add event sources
 
