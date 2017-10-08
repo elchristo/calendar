@@ -22,7 +22,7 @@ class CalendarBuilderTest extends TestCase
     public function testCanCreateAndInitCalendarBuilderInstance()
     {
         // given
-        $builder = self::getServiceContainer()->get(CalendarBuilder::class);
+        $builder = $this->getCalendarBuilder();
 
         // then
         $this->assertInstanceOf(CalendarBuilder::class, $builder);
@@ -35,7 +35,7 @@ class CalendarBuilderTest extends TestCase
     public function testBuildDefaultCalendarByUndefinedName()
     {
         // given
-        $builder = self::getServiceContainer()->get(CalendarBuilder::class);
+        $builder = $this->getCalendarBuilder();
         $calendarName = 'NotConfiguredCalendarName';
         $expectedCalendarInterface = CalendarInterface::class;
         $expectedCalendarClass = DefaultCalendar::class;
@@ -55,7 +55,7 @@ class CalendarBuilderTest extends TestCase
     public function testExpectedExceptionIsRaisedWhenTryingToBuildCalendarByInvalidClass()
     {
         // given
-        $builder = self::getServiceContainer()->get(CalendarBuilder::class);
+        $builder = $this->getCalendarBuilder();
         $invalidCalendarClassname = \stdClass::class;
         $this->expectException(InvalidArgumentException::class);
 
@@ -69,7 +69,7 @@ class CalendarBuilderTest extends TestCase
     public function testBuildCalendarDeclaredInContainer()
     {
         // given
-        $builder = self::getServiceContainer()->get(CalendarBuilder::class);
+        $builder = $this->getCalendarBuilder();
         $calendarNameInConfig = $expectedCalendarClassname = TestCalendar::class;
 
         // when
@@ -87,7 +87,7 @@ class CalendarBuilderTest extends TestCase
     public function testGetSourceFromPreconfiguredCalendar()
     {
         // given
-        $builder = self::getServiceContainer()->get(CalendarBuilder::class);
+        $builder = $this->getCalendarBuilder();
         $calendarName = TestCalendar::class;
 
         // when
@@ -108,7 +108,7 @@ class CalendarBuilderTest extends TestCase
     public function testCanAddKnownSourceToCalendar()
     {
         // given
-        $builder = self::getServiceContainer()->get(CalendarBuilder::class);
+        $builder = $this->getCalendarBuilder();
         $calendarName = 'SimpleDefaultCalendar';
         $sourceName = TestSource::class;
         $sourceOptions = [];
@@ -129,7 +129,7 @@ class CalendarBuilderTest extends TestCase
     public function testAddedSourceHasPassedOptions()
     {
         // given
-        $builder = self::getServiceContainer()->get(CalendarBuilder::class);
+        $builder = $this->getCalendarBuilder();
         $calendarName = 'SimpleDefaultCalendarToTestSourceWithOptions';
         $sourceName = TestSource::class;
         $sourceOptionsToAdd = [

@@ -3,6 +3,7 @@
 namespace Elchristo\Calendar\Test;
 
 use Zend\ServiceManager\ServiceManager;
+use Elchristo\Calendar\Service\Builder\CalendarBuilder;
 
 /**
  * Base class for all unit tests
@@ -51,5 +52,16 @@ abstract class TestCase extends \Codeception\Test\Unit
         }
 
         return self::$serviceContainer;
+    }
+
+    /**
+     * Return calendar builder instance
+     *
+     * @param array $config
+     * @return CalendarBuilder
+     */
+    protected function getCalendarBuilder(array $config = [])
+    {
+        return self::getServiceContainer()->build(CalendarBuilder::class, $config);
     }
 }
