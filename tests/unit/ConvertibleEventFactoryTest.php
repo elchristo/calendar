@@ -182,7 +182,7 @@ class ConvertibleEventFactoryTest extends TestCase
     /**
      * Test to convert event into FullCalendar event with all its specific attributes
      */
-    public function testCreatedFullCalendarEventContainsAllAttributes()
+    public function testCreateFullCalendarEventContainsAllAttributes()
     {
         // given
         $expectedAttributes = [
@@ -205,7 +205,7 @@ class ConvertibleEventFactoryTest extends TestCase
     /**
      * Test to convert event into FullCalendar event with correct ISO datetime format
      */
-    public function testCreatedFullCalendarEventHasCorrectIsoStartAndEndDate()
+    public function testCreateFullCalendarEventHasCorrectIsoStartAndEndDate()
     {
         // given
         $expectedIsoDatetimePattern = '/^([1-9]\d{3})-(\d{2})-(\d{2})T(\d{2})\:(\d{2})\:(\d{2})$/'; // Y-m-d\TH:i:s
@@ -239,7 +239,7 @@ class ConvertibleEventFactoryTest extends TestCase
     /**
      * Test to convert event into FullCalendar event with default "allDay" value FALSE
      */
-    public function testCreatedFullCalendarEventWithDefaultAllDayValueFalseWhenNoStartAndEndSpecified()
+    public function testCreateFullCalendarEventWithDefaultAllDayValueFalseWhenNoStartEnd()
     {
         // given
         $event = self::getServiceContainer()->build('TestToBeConvertedIntoFullCalendarJsonCalendarEvent');
