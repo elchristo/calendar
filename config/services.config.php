@@ -1,19 +1,26 @@
 <?php
 
-use Elchristo\Calendar\Service;
 use Elchristo\Calendar\Service\SourceLocator;
 use Elchristo\Calendar\Service\SourceLocatorFactory;
+use Elchristo\Calendar\Service\Builder\CalendarBuilder;
+use Elchristo\Calendar\Service\Builder\CalendarBuilderFactory;
+use Elchristo\Calendar\Service\Builder\SourceBuilder;
+use Elchristo\Calendar\Service\Builder\SourceBuilderFactory;
+use Elchristo\Calendar\Service\Builder\EventBuilder;
+use Elchristo\Calendar\Service\Config\Config;
+use Elchristo\Calendar\Service\Color\DefaultColorStrategy;
+
 
 return [
     'invokables' => [
-        Service\Config\Config::class,
-        Service\Builder\EventBuilder::class => Service\Builder\EventBuilder::class,
-        Service\Color\DefaultColorStrategy::class => Service\Color\DefaultColorStrategy::class,
+        Config::class,
+        EventBuilder::class,
+        DefaultColorStrategy::class
     ],
     'factories' => [
         SourceLocator::class => SourceLocatorFactory::class,
-        Service\Builder\CalendarBuilder::class => Service\Builder\CalendarBuilderFactory::class,
-        Service\Builder\SourceBuilder::class => Service\Builder\SourceBuilderFactory::class,
+        CalendarBuilder::class => CalendarBuilderFactory::class,
+        SourceBuilder::class => SourceBuilderFactory::class,
     ],
     'abstract_factories' => [
         /*
