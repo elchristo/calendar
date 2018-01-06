@@ -56,9 +56,10 @@ class SourceLocator
     }
 
     /**
+     * Proxy method to call ZF servicemanager "build" method
      *
-     * @param string $name
-     * @param array  $options
+     * @param string $name    Name of service to build
+     * @param array  $options Options for service building
      * @return SourceInterface
      */
     public function build($name, array $options = [])
@@ -67,7 +68,8 @@ class SourceLocator
     }
 
     /**
-     * Test whether a source has been declared in configuration
+     * Test whether a source has been declared in container configuration
+     * or class (implementing SourceInterface) by given name exists
      *
      * @param string $name The (class)name of the source to verify
      * @return boolean
