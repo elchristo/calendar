@@ -155,7 +155,7 @@ abstract class AbstractSource implements SourceInterface
      *
      * @return EventBuilder
      */
-    public function getEventBuilder()
+    final public function getEventBuilder()
     {
         return $this->eventBuilder;
     }
@@ -166,7 +166,7 @@ abstract class AbstractSource implements SourceInterface
      * @param  EventBuilder
      * @return SourceInterface
      */
-    public function setEventBuilder($builder)
+    final public function setEventBuilder($builder)
     {
         $this->eventBuilder = $builder;
         return $this;
