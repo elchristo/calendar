@@ -143,11 +143,9 @@ abstract class AbstractSource implements SourceInterface
      *
      * @return self
      */
-    final public function addCriteria($criteria)
+    final public function addCriteria(array $criteria)
     {
-        if (\is_array($criteria)) {
-            $this->options['criteria'] = ArrayUtils::merge($this->getCriteria(), $criteria);
-        }
+        $this->options['criteria'] = ArrayUtils::merge($this->getCriteria(), $criteria);
 
         return $this;
     }
@@ -157,7 +155,7 @@ abstract class AbstractSource implements SourceInterface
      *
      * @return EventBuilder
      */
-    public function getEventBuilder()
+    final public function getEventBuilder()
     {
         return $this->eventBuilder;
     }
@@ -168,7 +166,7 @@ abstract class AbstractSource implements SourceInterface
      * @param  EventBuilder
      * @return SourceInterface
      */
-    public function setEventBuilder($builder)
+    final public function setEventBuilder($builder)
     {
         $this->eventBuilder = $builder;
         return $this;

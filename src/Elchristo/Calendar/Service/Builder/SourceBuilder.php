@@ -19,38 +19,34 @@ class SourceBuilder implements ConfigAwareInterface
     /** @var SourceLocator */
     protected $sourceLocator;
 
+    public function __construct(SourceLocator $locator)
+    {
+        $this->sourceLocator = $locator;
+    }
+
     /**
      * Factory method to build and initialize a calendar events source
      *
-     * @param string $sourceName The name of the configured source to build or its classname
+     * @param string $sourceClassName The name of the configured source to build or its classname
      * @param array  $options    Additional source options
      *
      * @return mixed SourceInterface|null
      * @throws RuntimeException
      */
-    public function build($sourceName, array $options = [])
+    public function build($sourceClassName, array $options = [])
     {
-        if (empty($sourceName)) {
-            throw new InvalidArgumentException("Cannot build calendar source with invalid empty source name.");
+        if (!\class_exists($sourceClassName)) {
+            throw new InvalidArgumentException("Calendar source class {$sourceClassName} does not exist.");
         }
 
-        if (\class_exists($sourceName)) {
-            $fullClassName = $sourceName;
-        } else {
-            $fullClassName = $this->getSourceLocator()->getSourceClassName($sourceName);
-            if (false === $fullClassName || !\class_exists($fullClassName)) {
-                throw new RuntimeException(\sprintf("Calendar source width name '%s' (class name %s) was either not declared in configuration or does not exist.", $sourceName, $fullClassName));
-            }
+        if (!\class_implements($sourceClassName, SourceInterface::class)) {
+            throw new InvalidArgumentException(\sprintf("Declared calendar source '%s' needs to implement %s.", $sourceClassName, SourceInterface::class));
         }
 
         // Create source instance
-        $source = new $fullClassName($sourceName, $options);
+        $source = new $sourceClassName($sourceClassName, $options);
 
-        if (true !== $source instanceof SourceInterface) {
-            throw new RuntimeException(\sprintf("Declared calendar source '%s' needs to implement %s.", $sourceName, SourceInterface::class));
-        }
-
-        $eventBuilder = EventBuilder::getInstance($this->getSourceLocator()->getConfig());
+        $eventBuilder = EventBuilder::getInstance($this->sourceLocator, $options);
         $source->setEventBuilder($eventBuilder);
 
         return $source;
@@ -59,11 +55,5 @@ class SourceBuilder implements ConfigAwareInterface
     public function getSourceLocator()
     {
         return $this->sourceLocator;
-    }
-
-    public function setSourceLocator($sourceLocator)
-    {
-        $this->sourceLocator = $sourceLocator;
-        return $this;
     }
 }

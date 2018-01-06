@@ -3,7 +3,7 @@
 namespace Elchristo\Calendar\Service\Builder;
 
 use Elchristo\Calendar\Exception\InvalidArgumentException;
-use Elchristo\Calendar\Model\AbstractCalendar;
+use Elchristo\Calendar\Model\CalendarInterface;
 use Elchristo\Calendar\Model\Event\Collection as EventsCollection;
 use Elchristo\Calendar\Service\Config\ConfigAwareInterface;
 use Elchristo\Calendar\Service\Config\ConfigProviderTrait;
@@ -23,39 +23,32 @@ class CalendarBuilder implements ConfigAwareInterface
     /**
      * Build a new calendar instance by name declared in configuration
      *
-     * @param string $name The declared calendar name
+     * @param string $name The declared calendar class
      * @param array  $sources Associative array of calendar sources (eg. ['sourceA' => [options...]])
      *
-     * @return AbstractCalendar
+     * @return CalendarInterface
      */
-    public function build($name, array $sources = [])
+    public function build(string $name, array $sources = [])
     {
         if (empty($name)) {
             throw new InvalidArgumentException("Calendar name must not be empty.");
         }
 
-        if (!\is_string($name)) {
-            throw new InvalidArgumentException("Calendar name must be of type string.");
-        }
-
         $config = $this->getConfig();
-        $registeredCalendars = $config->getRegisteredCalendars();
         $sourceBuilder = $this->getSourceBuilder();
+        $sourceBuilder->setConfig($config);
         $eventsCollection = new EventsCollection();
 
-        if (!\array_key_exists($name, $registeredCalendars) || !\class_exists($registeredCalendars[$name])) {
+        if (\is_subclass_of($name, CalendarInterface::class)) {
+            $calendar = new $name($sourceBuilder, $eventsCollection);
+        } else if (!\class_exists($name)) {
             $calendar = new DefaultCalendar($sourceBuilder, $eventsCollection);
         } else {
-            $className = $registeredCalendars[$name];
-            $calendar = new $className($sourceBuilder, $eventsCollection);
-        }
-
-        // TODO : This should always be the case
-        if ($calendar instanceof ConfigAwareInterface) {
-            $calendar->setConfig($config);
+            throw new InvalidArgumentException(\sprintf('Cannot create calendar by passed name "%s". Either a class implementing CalendarInterface or a string (not a class name) accepted.', $name));
         }
 
         $calendar
+            ->setConfig($config)
             ->setName($name)
             ->init();
 

@@ -2,7 +2,9 @@
 
 namespace Elchristo\Calendar\Test\unit\Stub;
 
-class TestColorStrategy extends Service\Color\AbstractColorStrategy
+use Elchristo\Calendar\Service\Color\AbstractColorStrategy;
+
+class TestColorStrategy extends AbstractColorStrategy
 {
     public function getColorCodeByEvent()
     {

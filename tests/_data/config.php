@@ -2,6 +2,8 @@
 
 namespace Elchristo\Calendar\Test\unit\Stub;
 
+use Elchristo\Calendar\Test\unit\Stub\TestColorStrategy;
+
 /*
  * Configuration for unit tests
  */
@@ -9,21 +11,18 @@ namespace Elchristo\Calendar\Test\unit\Stub;
 $config = [
     'elchristo' => [
         'calendar' => [
-            'calendars' => [
-                'TestCalendar' => TestCalendar::class
-            ],
-            'sources' => [
-                'TestSource' => TestSource::class,
-                'TestFakerSource' => TestFakerSource::class
-            ],
-            'events' => [
-                'TestEventBasic' => TestEventBasic::class,
-                'TestEventWithAttributes' => TestEventWithAttributes::class,
-                'TestCalendarEventToBeConverted' => TestEventIcal::class,
-            ],
             'converters' => [
                 'Ical' => [
                     TestEventIcal::class => TestEventIcalConverter::class,
+                ]
+            ],
+
+            'colors' => [
+                'strategies' => [
+                    'MyFirstColorStrategyAlias' => TestColorStrategy::class,
+                    'MySecondColorStrategyAlias' => [
+                        'name' => TestColorStrategy::class
+                    ]
                 ]
             ]
         ]

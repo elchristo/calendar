@@ -8,8 +8,8 @@ use Elchristo\Calendar\Converter\Ical\Event\AbstractIcalEvent;
 use Elchristo\Calendar\Model\Event\Collection;
 use Elchristo\Calendar\Service\Config\Config;
 use Elchristo\Calendar\Converter\Converter;
-use Elchristo\Calendar\Service\Builder\EventBuilder;
-use Elchristo\Calendar\Service\Builder\SourceBuilderFactory;
+use Elchristo\Calendar\Service\Builder\SourceBuilder;
+use Elchristo\Calendar\Test\unit\Stub\TestEventIcal;
 
 class ConvertibleEventFactoryTest extends TestCase
 {
@@ -36,8 +36,7 @@ class ConvertibleEventFactoryTest extends TestCase
     public function testCanConvertCalendarByGivenConverterClassname()
     {
         // given
-        $config = $this->getConfigProvider();
-        $sourceBuilder = SourceBuilderFactory::create($config);
+        $sourceBuilder = self::getServiceContainer()->get(SourceBuilder::class);
         $calendar = new unit\Stub\TestCalendar($sourceBuilder, new Collection());
         $jsonConverterClassname = \Elchristo\Calendar\Converter\Json\Json::class;
 
@@ -54,10 +53,8 @@ class ConvertibleEventFactoryTest extends TestCase
     public function testCanConvertCalendarByGivenConverterName()
     {
         // given
-        $config = $this->getConfigProvider();
-        $sourceBuilder = SourceBuilderFactory::create($config);
+        $sourceBuilder = self::getServiceContainer()->get(SourceBuilder::class);
         $calendar = new unit\Stub\TestCalendar($sourceBuilder, new Collection());
-        $calendar->setConfig($config);
         $jsonConverterName = 'json';
 
         // when
@@ -73,9 +70,7 @@ class ConvertibleEventFactoryTest extends TestCase
     public function testCanCreateEventAndConvertItToJson()
     {
         // given
-        $configProvider = $this->getConfigProvider();
-        $builder = EventBuilder::getInstance($configProvider);
-        $event = $builder->build('SomeUndefinedCalendarEvent');
+        $event = self::getServiceContainer()->build('SomeUndefinedCalendarEvent');
         $factory = $this->getFactory();
 
         // when
@@ -92,8 +87,7 @@ class ConvertibleEventFactoryTest extends TestCase
     public function testCanBuildConvertibleIcalEvent()
     {
         // given
-        $builder = EventBuilder::getInstance($this->getConfigProvider());
-        $event = $builder->build('TestCalendarEventToBeConverted');
+        $event = self::getServiceContainer()->build('TestToBeConvertedCalendarEvent');
 
         // when
         $iCalEventConverter = $this->getFactory()->build($event, 'ical');
@@ -113,8 +107,7 @@ class ConvertibleEventFactoryTest extends TestCase
         $summary = 'SUMMARY:summary in special event attribut';
         $statusInEventConverter = 'STATUS:TENTATIVE';
 
-        $builder = EventBuilder::getInstance($this->getConfigProvider());
-        $event = $builder->build('TestCalendarEventToBeConverted');
+        $event = self::getServiceContainer()->build(TestEventIcal::class);
         $event->setSpecialAttribute($summary);
 
         // when
@@ -134,9 +127,7 @@ class ConvertibleEventFactoryTest extends TestCase
     public function testCanCreateEventAndConvertItToFullCalendarJson()
     {
         // given
-        $configProvider = $this->getConfigProvider();
-        $builder = EventBuilder::getInstance($configProvider);
-        $event = $builder->build('SomeCalendarEventForFullCalendarConversionTest');
+        $event = self::getServiceContainer()->build('ForFullCalendarConversionTestCalendarEvent');
         $factory = $this->getFactory();
 
         // when
@@ -154,8 +145,7 @@ class ConvertibleEventFactoryTest extends TestCase
     public function testCanBuildConvertibleFullCalendarEvent()
     {
         // given
-        $builder = EventBuilder::getInstance($this->getConfigProvider());
-        $event = $builder->build('TestCalendarFcEventToBeConverted');
+        $event = self::getServiceContainer()->build('TestFcEventToBeConvertedCalendarEvent');
         $description = 'fullcalendar event description.';
         $event->setDescription($description);
 
@@ -175,8 +165,7 @@ class ConvertibleEventFactoryTest extends TestCase
         $expectedTitle = 'fullcalendar event title.';
         $expectedDescription = 'fullcalendar event description.';
 
-        $builder = EventBuilder::getInstance($this->getConfigProvider());
-        $event = $builder->build('TestCalendarEventToBeConvertedIntoFullCalendarJson');
+        $event = self::getServiceContainer()->build('TestToBeConvertedIntoFullCalendarJsonCalendarEvent');
         $event
             ->setTitle($expectedTitle)
             ->setDescription($expectedDescription);
@@ -193,15 +182,14 @@ class ConvertibleEventFactoryTest extends TestCase
     /**
      * Test to convert event into FullCalendar event with all its specific attributes
      */
-    public function testCreatedFullCalendarEventContainsAllAttributes()
+    public function testCreateFullCalendarEventContainsAllAttributes()
     {
         // given
         $expectedAttributes = [
             'id', 'idBySource', 'title', 'titleDetails', 'published', 'description', 'start', 'end', 'allDay', 'editable'
         ];
 
-        $builder = EventBuilder::getInstance($this->getConfigProvider());
-        $event = $builder->build('TestCalendarEventToBeConvertedIntoFullCalendarJson');
+        $event = self::getServiceContainer()->build('TestToBeConvertedIntoFullCalendarJsonCalendarEvent');
 
         // when
         $fullCalendarEventConverter = $this->getFactory()->build($event, 'FullCalendar');
@@ -217,13 +205,12 @@ class ConvertibleEventFactoryTest extends TestCase
     /**
      * Test to convert event into FullCalendar event with correct ISO datetime format
      */
-    public function testCreatedFullCalendarEventHasCorrectIsoStartAndEndDate()
+    public function testCreateFullCalendarEventHasCorrectIsoStartAndEndDate()
     {
         // given
         $expectedIsoDatetimePattern = '/^([1-9]\d{3})-(\d{2})-(\d{2})T(\d{2})\:(\d{2})\:(\d{2})$/'; // Y-m-d\TH:i:s
-        $builder = EventBuilder::getInstance($this->getConfigProvider());
-        $eventWithoutStartAndEnd = $builder->build('TestCalendarEventWithoutStartAndEnd');
-        $eventWithStartAndEnd = $builder->build('TestCalendarEventWithStartAndEnd');
+        $eventWithoutStartAndEnd = self::getServiceContainer()->build('TestWithoutStartAndEndCalendarEvent');
+        $eventWithStartAndEnd = self::getServiceContainer()->build('TestWithStartAndEndCalendarEvent');
 
         $start = \DateTime::createFromFormat('YmdHi', '201708310915');
         $end = \DateTime::createFromFormat('YmdHi', '201708312200');
@@ -252,11 +239,10 @@ class ConvertibleEventFactoryTest extends TestCase
     /**
      * Test to convert event into FullCalendar event with default "allDay" value FALSE
      */
-    public function testCreatedFullCalendarEventWithDefaultAllDayValueFalseWhenNoStartAndEndSpecified()
+    public function testCreateFullCalendarEventWithDefaultAllDayValueFalseWhenNoStartEnd()
     {
         // given
-        $builder = EventBuilder::getInstance($this->getConfigProvider());
-        $event = $builder->build('TestCalendarEventToBeConvertedIntoFullCalendarJson');
+        $event = self::getServiceContainer()->build('TestToBeConvertedIntoFullCalendarJsonCalendarEvent');
 
         // when
         $fullCalendarEventConverter = $this->getFactory()->build($event, 'FullCalendar');

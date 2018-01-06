@@ -43,7 +43,7 @@ class Converter
      *
      * @return mixed canonicalized name if converter exists, otherwise FALSE
      */
-    protected static function exists($name, array $convertibleEvents = [], $buildIfExists = \false)
+    protected static function exists(string $name, array $convertibleEvents = [], $buildIfExists = \false)
     {
         $canonicalizeName = self::canonicalizeName($name);
         if (isset(self::$converters[$canonicalizeName])) {
@@ -82,7 +82,7 @@ class Converter
      * @param array  $registeredConvertibleEvents List of configured converters
      * @return ConverterInterface
      */
-    private static function build($className, array $registeredConvertibleEvents = [])
+    private static function build(string $className, array $registeredConvertibleEvents = [])
     {
         $canonicalizeName = self::canonicalizeName($className);
         if (isset(self::$converters[$canonicalizeName])) {

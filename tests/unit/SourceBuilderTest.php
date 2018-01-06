@@ -1,26 +1,22 @@
 <?php
 namespace Elchristo\Calendar\Test;
 
-use Elchristo\Calendar\Service\Config\Config;
 use Elchristo\Calendar\Model\Event\Collection;
 use Elchristo\Calendar\Model\Source\SourceInterface;
-use Elchristo\Calendar\Service\Builder\SourceBuilderFactory;
+use Elchristo\Calendar\Service\Builder\SourceBuilder;
+use Elchristo\Calendar\Test\unit\Stub\TestSource;
+use Elchristo\Calendar\Exception\InvalidArgumentException;
 
 class SourceBuilderTest extends TestCase
 {
-    private function getConfigProvider()
-    {
-        return new Config(self::getConfig()['elchristo']['calendar']);
-    }
-
     /**
      * Test to build source by its name in configuration
      */
     public function testBuildSourceByConfig()
     {
         // given
-        $builder = SourceBuilderFactory::create($this->getConfigProvider());
-        $sourceName = 'TestSource'; // stub class unit\Stub\TestSource
+        $builder = self::getServiceContainer()->get(SourceBuilder::class);
+        $sourceName = TestSource::class;
         $sourceInterface = SourceInterface::class;
 
         // when
@@ -36,7 +32,7 @@ class SourceBuilderTest extends TestCase
     public function testBuildSourceByClassname()
     {
         // given
-        $builder = SourceBuilderFactory::create($this->getConfigProvider());
+        $builder = self::getServiceContainer()->get(SourceBuilder::class);
         $sourceName = unit\Stub\TestSource::class;
         $sourceInterface = SourceInterface::class;
 
@@ -48,30 +44,13 @@ class SourceBuilderTest extends TestCase
     }
 
     /**
-     * Test to initialize source identifier by configured name
-     */
-    public function testBuildSourceIdentifierWithPassedName()
-    {
-        // given
-        $builder = SourceBuilderFactory::create($this->getConfigProvider());
-        $sourceName = 'TestSource';
-        $expectedName = 'testsource';
-
-        // when
-        $source = $builder->build($sourceName);
-
-        // then
-        $this->assertEquals($expectedName, $source->getIdentifier());
-    }
-
-    /**
-     * Test to initialize source identifier by configured name
+     * Test to initialize source identifier by configured classname
      */
     public function testBuildSourceIdentifierWithSourceClassname()
     {
         // given
-        $builder = SourceBuilderFactory::create($this->getConfigProvider());
-        $sourceName = unit\Stub\TestSource::class;
+        $builder = self::getServiceContainer()->get(SourceBuilder::class);
+        $sourceName = TestSource::class;
         $expectedName = 'elchristocalendartestunitstubtestsource';
 
         // when
@@ -81,14 +60,14 @@ class SourceBuilderTest extends TestCase
         $this->assertEquals($expectedName, $source->getIdentifier());
     }
 
-        /**
+    /**
      * Test to retrieve event collection from source
      */
     public function testCanRetrieveEventsCollection()
     {
         // given
-        $builder = SourceBuilderFactory::create($this->getConfigProvider());
-        $source = $builder->build('TestSource'); // stub class unit\Stub\TestSource
+        $builder = self::getServiceContainer()->get(SourceBuilder::class);
+        $source = $builder->build(TestSource::class); // stub class unit\Stub\TestSource
         $expected = Collection::class;
 
         // when
@@ -104,11 +83,11 @@ class SourceBuilderTest extends TestCase
     public function testRetrieveEventsCollectionFromSource()
     {
         // given
-        $builder = SourceBuilderFactory::create($this->getConfigProvider());
-        $source = $builder->build('TestSource'); // stub class unit\Stub\TestSource
-        $eventsCollection = $source->getEvents();
+        $builder = self::getServiceContainer()->get(SourceBuilder::class);
+        $source = $builder->build(TestSource::class); // stub class unit\Stub\TestSource
 
         // when
+        $eventsCollection = $source->getEvents();
         $iterator = $eventsCollection->getIterator();
 
         // then
@@ -128,5 +107,37 @@ class SourceBuilderTest extends TestCase
 
         $event2 = $iterator->offsetGet(456);
         $this->assertEquals($event2->getId(), 456);
+    }
+
+    /**
+     * Test that expected InvalidArgumentException is raised when trying to build unknown source
+     */
+    public function testExpectedExceptionIsRaisedWhenBuildingNonExistingCalendarSource()
+    {
+        // given
+        $builder = self::getServiceContainer()->get(SourceBuilder::class);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Calendar source class AnyNonExistingClassName does not exist.');
+
+        // when
+        $source = $builder->build('AnyNonExistingClassName');
+
+        // then
+    }
+
+    /**
+     * Test that expected InvalidArgumentException is raised when trying to build invalid source
+     */
+    public function testExpectedExceptionIsRaisedWhenBuildingInvalidCalendarSource()
+    {
+        // given
+        $builder = self::getServiceContainer()->get(SourceBuilder::class);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Declared calendar source 'stdClass' needs to implement Elchristo\Calendar\Model\Source\SourceInterface.");
+
+        // when
+        $source = $builder->build(\stdClass::class);
+
+        // then
     }
 }

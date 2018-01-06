@@ -8,15 +8,6 @@ namespace Elchristo\Calendar\Service\Config;
 class Config
 {
     /** @var string */
-    const CONFIG_KEY_CALENDARS = 'calendars';
-
-    /** @var string */
-    const CONFIG_KEY_SOURCES = 'sources';
-
-    /** @var string */
-    const CONFIG_KEY_EVENTS = 'events';
-
-    /** @var string */
     const CONFIG_KEY_CONVERTERS = 'converters';
 
     /** @var string */
@@ -32,51 +23,6 @@ class Config
     public function __construct(array $config = [])
     {
         $this->config = $config;
-    }
-
-    /**
-     * Return list of declared calendars in configuration
-     * @return array
-     */
-    public function getRegisteredCalendars()
-    {
-        if (!\array_key_exists(self::CONFIG_KEY_CALENDARS, $this->config)
-            || !\is_array($this->config[self::CONFIG_KEY_CALENDARS])
-        ) {
-            return [];
-        }
-
-        return $this->config[self::CONFIG_KEY_CALENDARS];
-    }
-
-    /**
-     * Return list of declared sources in configuration
-     * @return array
-     */
-    public function getRegisteredSources()
-    {
-        if (!\array_key_exists(self::CONFIG_KEY_SOURCES, $this->config)
-            || !\is_array($this->config[self::CONFIG_KEY_SOURCES])
-        ) {
-            return [];
-        }
-
-        return $this->config[self::CONFIG_KEY_SOURCES];
-    }
-
-    /**
-     * Return list of declared events in configuration
-     * @return array
-     */
-    public function getRegisteredEvents()
-    {
-        if (!\array_key_exists(self::CONFIG_KEY_EVENTS, $this->config)
-            || !\is_array($this->config[self::CONFIG_KEY_EVENTS])
-        ) {
-            return [];
-        }
-
-        return $this->config[self::CONFIG_KEY_EVENTS];
     }
 
     /**

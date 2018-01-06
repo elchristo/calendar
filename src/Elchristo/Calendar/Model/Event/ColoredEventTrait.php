@@ -29,7 +29,7 @@ trait ColoredEventTrait
      *
      * @param string $colorCode Color code (eg. #9f9f9f)
      */
-    public function setColorCode($colorCode)
+    public function setColorCode(string $colorCode)
     {
         $this->colorCode = $colorCode;
         return $this;

@@ -1,39 +1,40 @@
 # Calendar builder and converter
 
 `Calendar` is a PHP library to create custom calendars composed of self defined event sources.
-Furthermore you can convert built calendars easily into various output formats (eg. Json, iCalendar, FullCalendar, ...).
+Created calendars can be easily converted into various output formats (eg. Json, iCalendar (ics), FullCalendar, ...).
 
 # Table of Contents
 
  - Installation
- - Tests
  - Basic usage
  - Full example
  - Options
  - Converters
+ - Tests
 
 ## Installation
 
     composer require elchristo/calendar
 
-## Tests
-
-    // to run tests with codeceptions
-    php5 ./vendor/bin/codecept run unit
-
 ## Basic usage
 
-    // calendar builder (passed configuration array is optional)
-    $calendarBuilder = CalendarBuilderFactory::create($config); // for alternative service container implementation see full example below
-    $calendar = $calendarBuilder->build('CalendarName');
-    $calendar->addSource('SourceName'); // you can as well pass a source classname
-    $events = $calendar->getEvents(); // gives you a traversable collection of calendar events
+    // (1) service container (used to retrieve calendars, sources, events etc.)
+    // see full example below for use of own service container
+    $services = include 'config/services.config.php';
+    $serviceContainer = new Zend\ServiceManager\ServiceManager($services);
+
+    // (2) calendar builder
+    $config = include 'config/config.php'; // optional config array (see configuration section below)
+    $calendarBuilder = $serviceContainer->build(CalendarBuilder::class, $config);
+    $calendar = $calendarBuilder->build('SomeCalendarName');
+    $calendar->addSource(SomeCalendarSource::class);
+    $events = $calendar->getEvents(); // retrieve traversable collection of calendar events
 
     // convert calendar into json
-    $json = Converter::convert($calendar, 'json'); // instead you can pass a converter classname as second parameter
+    $json = Converter::convert($calendar, 'json'); // second parameter can as well be a converter classname
 
     // convert calendar into "iCalendar" format (RFC 2445, VCALENDAR)
-    $ics = Converter::convert($calendar, 'ical'); // instead you can pass a converter classname as second parameter
+    $ics = Converter::convert($calendar, 'ical'); // second parameter can as well be a converter classname
 
     // convert calendar into "FullCalendar" JSON format (see https://github.com/fullcalendar/fullcalendar)
     $fcJson = Converter::convert($calendar, 'FullCalendar');
@@ -42,9 +43,7 @@ Furthermore you can convert built calendars easily into various output formats (
 
 ### Configuration
 
-The optional configuration gives you the possibility to configure aliases for your own calendars,
-sources, events and converters as well self defined color strategies.
-This can either be included by using a file or your app configuration accessible by a service container.
+The optional configuration gives you the possibility to declare your own converters as well as event colors and color strategies.
 If no configuration is passed to the `CalendarBuilderFactory` an empty configuration is created internally.
 
 Below you can see a basic example configuration file :
@@ -58,25 +57,10 @@ Below you can see a basic example configuration file :
 
             'calendar' => [
 
-                // calendar aliases (optional)
-                'calendars' => [
-                    'MyCalendar' => My\Calendar\ClassName::class
-                ],
-
-                // calendar event source aliases (optional)
-                'sources' => [
-                    'MySource' => My\Source\ClassName::class
-                ],
-
-                // source event aliases (optional)
-                'events' => [
-                    'MyEvent' => My\Event\ClassName::class
-                ],
-
                 // your own converter strategies (optional)
                 'converters' => [
-                    'MyJsonConverter' => [
-                        MyJsonConverter\Event\ClassName::class => MyJsonConverter\ClassName::class
+                    'MyJsonConverterAlias' => [
+                        MyJsonConverter\Event\MyEventType::class => MyJsonConverter\ClassName::class
                     ]
                 ],
 
@@ -137,10 +121,10 @@ Example source class :
             $eventsBuilder = $this->getEventBuilder();
             $eventsCollection = $this->getEventsCollection();
 
-            foreach ($results as $result) :
-                $event = $eventsBuilder->build('MyEvent', $result, $this->getOptions());
+            foreach ($results as $result) {
+                $event = $eventsBuilder->build(MyEvent::class, $result, $this->getOptions());
                 $eventsCollection->add($event);
-            endforeach;
+            }
 
             return $eventsCollection;
         }
@@ -150,26 +134,29 @@ Example source class :
 
 ### Retrieve the calendar builder
 
-    // solution 1 : CalendarBuilderFactory
-    $calendarBuilder = CalendarBuilderFactory::create($config);
+    // solution 1 : using pre-configured internal ZF service manager component
+    $services = include 'config/services.config.php';
+    $sm = new Zend\ServiceManager\ServiceManager($services);
+    $calendarBuilder = $sm->get(CalendarBuilder::class);
 
-    // solution 2 (service container)
-    $container = ServiceContainer::create($config); // if you use the internal container
-    $calendarBuilder = $container->get('CalendarBuilder');
+    // solution 2 : using own ZF service manager
+    // Important : you need to integrate the content of included services.config.php file into your app configuration
+    $sm = $this->getServiceLocator();
+    $config = include 'config/config.php'; // calendar config (converters, color strategies, ...)
+    $calendarBuilder = $sm->build(CalendarBuilder::class, $config);
 
 ### Build a calendar and add event sources
 
 Then use it to build an instance of your calendar and add any of your defined calendar sources.
 
     $calendar = $calendarBuilder->build('MyFirstCalendar');
-    // if no calendar with the name "MyFirstCalendar" has been declared in configuration
-    // an empty default calendar named "MyFirstCalendar" is built
+    // if no class with passed calendar name can be found an empty default calendar named "MyFirstCalendar" is built
 
     $calendar
-        ->addSource('SourceA')
-        ->addSource('SourceB');
+        ->addSource(SourceA::class)
+        ->addSource(SourceB::class);
 
-    // sourceA and sourceB have to be declared in configuration
+    // sourceA and sourceB must be valid calendar sources (implement "SourceInterface")
 
 ### Retrieve calendar events
 
@@ -201,12 +188,12 @@ If your source contains calendar events implementing the `ColoredEventInterface`
 Color strategies give you the possibility to color an event by conditions.
 If you want for example apply a color to an event depending on if it is public or not, you can implement a color strategy for that.
 
-Example use in options when building a calendar source :
+Example use in options when building a calendar source (you can declare color strategy class as "service" in container configuration) :
 
-    'color_strategy' => 'ColorByEventStatus'
+    'color_strategy' => ColorByEventStatus::class
 
     'color_strategy' => [
-        'name' => 'ColorByEventStatus',
+        'name' => ColorByEventStatus::class,
         'attributes' => [
             ...
         ]
@@ -246,3 +233,9 @@ To avoid autoloading problems we recommend to respect the following directory st
 
 The converter and its *convertible events* must be declared in configuration file
 under the key `converters` (see configuration example).
+
+
+## Tests
+
+    // to run tests with codeceptions
+    php ./vendor/bin/codecept run unit

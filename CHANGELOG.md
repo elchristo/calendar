@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0
+
+ - new stable release compatible PHP 7.1 (drop PHP 5.6 support)
+ - replace internal service container by Zend Framework service manager component (#1)
+ - use factories to create "builder" instances and events (declared as "services" in configuration)
+ - fix colors strategies not initialized correctly on event creation
+ - improve unit tests
+ - improve documentation
+
+
 ## 1.0
 
  - first stable release compatible PHP 5.6

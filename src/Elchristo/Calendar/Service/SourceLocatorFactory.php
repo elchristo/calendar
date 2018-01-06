@@ -1,17 +1,15 @@
 <?php
 
-namespace Elchristo\Calendar\Service\Builder;
+namespace Elchristo\Calendar\Service;
 
-use Elchristo\Calendar\Service\SourceLocator;
-use Elchristo\Calendar\Service\Builder\SourceBuilder;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use Elchristo\Calendar\Service\SourceLocator;
 
 /**
- * Factory to create and prepare source builder instance
- * (either with static "create" method or by using a service container)
+ * Factory to build source locator instance
  */
-class SourceBuilderFactory implements FactoryInterface
+class SourceLocatorFactory implements FactoryInterface
 {
     /**
      * Factory method
@@ -24,7 +22,6 @@ class SourceBuilderFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $locator = $container->get(SourceLocator::class);
-        return new SourceBuilder($locator);
+        return new SourceLocator($container);
     }
 }
