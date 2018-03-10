@@ -1,5 +1,8 @@
 # Calendar builder and converter
 
+Master :
+[![Build Status](https://travis-ci.org/elchristo/calendar.svg?branch=master)](https://travis-ci.org/elchristo/calendar)
+
 `Calendar` is a PHP library to create custom calendars composed of self defined event sources.
 Created calendars can be easily converted into various output formats (eg. Json, iCalendar (ics), FullCalendar, ...).
 
