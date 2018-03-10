@@ -13,4 +13,4 @@ cache:
     - vendor
     - $HOME/.composer/cache
 script:
-  - php codecept run cli,unit # self tests
+  - php vendor/bin/codecept run cli,unit # self tests
