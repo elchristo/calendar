@@ -1,0 +1,16 @@
+language: php
+php:
+  - '7.0'
+  - '7.1'
+sudo: false
+install:
+  - composer self-update && composer --version
+  - composer install --no-interaction
+branches:
+  only: master
+cache:
+  directories:
+    - vendor
+    - $HOME/.composer/cache
+script:
+  - php codecept run cli,unit # self tests
