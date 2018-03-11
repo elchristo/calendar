@@ -23,9 +23,6 @@ return [
                     '#ff0',
                     '#000'
                 ],
-                'strategies' => [
-                    'MyColorStrategy' => My\ColorStrategy\ClassName::class
-                ]
             ]
 
         ]

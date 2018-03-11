@@ -62,6 +62,10 @@ abstract class TestCase extends \Codeception\Test\Unit
      */
     protected function getCalendarBuilder(array $config = [])
     {
+        if (empty($config)) {
+            $config = $this->getConfig();
+        }
+
         return self::getServiceContainer()->build(CalendarBuilder::class, $config);
     }
 }

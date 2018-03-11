@@ -191,7 +191,8 @@ If your source contains calendar events implementing the `ColoredEventInterface`
 Color strategies give you the possibility to color an event by conditions.
 If you want for example apply a color to an event depending on if it is public or not, you can implement a color strategy for that.
 
-Example use in options when building a calendar source (you can declare color strategy class as "service" in container configuration) :
+You can use the following options when building a calendar source (within a calendar).
+Note : you have to declare color strategies as services in container configuration.
 
     'color_strategy' => ColorByEventStatus::class
 

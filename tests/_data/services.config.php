@@ -12,6 +12,7 @@ use Elchristo\Calendar\Service\Config\Config;
 use Elchristo\Calendar\Service\Color\DefaultColorStrategy;
 use Elchristo\Calendar\Test\unit\Stub;
 use Elchristo\Calendar\Test\unit\Stub\TestColorStrategy;
+use Elchristo\Calendar\Test\unit\Stub\TestColorStrategyAnother;
 
 return [
     'invokables' => [
@@ -19,6 +20,8 @@ return [
         EventBuilder::class,
         DefaultColorStrategy::class,
         TestColorStrategy::class,
+        'MyColorStrategy' => TestColorStrategyAnother::class,
+        'MyFirstColorStrategyAlias' => TestColorStrategy::class,
     ],
     'factories' => [
         SourceLocator::class => SourceLocatorFactory::class,

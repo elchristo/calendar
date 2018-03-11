@@ -11,6 +11,7 @@ use Elchristo\Calendar\Model\Source\SourceInterface;
 use Elchristo\Calendar\Model\Event\Collection;
 use Elchristo\Calendar\Test\unit\Stub\TestCalendar;
 use Elchristo\Calendar\Test\unit\Stub\TestSource;
+use Elchristo\Calendar\Test\unit\Stub\TestColorStrategyAnother;
 
 class CalendarBuilderTest extends TestCase
 {
@@ -152,5 +153,27 @@ class CalendarBuilderTest extends TestCase
 
         // then
         $this->assertEquals($options, $sourceOptionsToAdd);
+    }
+
+    /**
+     * Test to retrieve valid color strategy from calendar source configured in calendar definition
+     */
+    public function testColorStrategyConfiguredInCalendarDefinitionIsAppliedCorrectly()
+    {
+        // given
+        $builder = $this->getCalendarBuilder();
+        $calendarName = TestCalendar::class;
+        $sourceName = TestSource::class;
+        $expectedColorStrategy = TestColorStrategyAnother::class;
+
+        // when
+
+        // when
+        $calendar = $builder->build($calendarName);
+        $source = $calendar->getSource($sourceName);
+
+        // then
+        $appliedColorStrategy = $source->getEvents()->current()->getColorStrategy();
+        $this->assertInstanceOf($expectedColorStrategy, $appliedColorStrategy);
     }
 }

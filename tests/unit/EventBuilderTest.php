@@ -139,4 +139,23 @@ class EventBuilderTest extends TestCase
         $this->assertInstanceOf($expectedColorStrategyInterface, $colorStrategy, "Event must implement {$expectedColorStrategyInterface}.");
         $this->assertInstanceOf($expectedColorStrategyAfterChange, $colorStrategy, "Event should have color strategy {$expectedColorStrategyAfterChange}.");
     }
+
+    /**
+     * Test that color strategy class is injected correctly by using its service alias
+     * defined in service container configuration
+     */
+    public function testCanInjectColorStrategyByAlias()
+    {
+        // given
+        $eventName = TestEventBasic::class;
+        $eventOptions = [ 'color_strategy' => 'MyFirstColorStrategyAlias' ];
+        $expectedColorStrategy = TestColorStrategy::class;
+
+        // when
+        $event = self::getServiceContainer()->build($eventName, $eventOptions);
+        $colorStrategy = $event->getColorStrategy();
+
+        // then
+        $this->assertInstanceOf($expectedColorStrategy, $colorStrategy, "Event should have color strategy {$expectedColorStrategy}.");
+    }
 }

@@ -18,12 +18,7 @@ $config = [
             ],
 
             'colors' => [
-                'strategies' => [
-                    'MyFirstColorStrategyAlias' => TestColorStrategy::class,
-                    'MySecondColorStrategyAlias' => [
-                        'name' => TestColorStrategy::class
-                    ]
-                ]
+
             ]
         ]
     ]
