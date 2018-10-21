@@ -17,6 +17,10 @@ interface CalendarEventInterface
 
     public function setTitle($title);
 
+    public function getTitleShort();
+
+    public function setTitleShort($titleShort);
+
     public function getDescription();
 
     public function setDescription($description);
@@ -36,4 +40,8 @@ interface CalendarEventInterface
     public function getType();
 
     public function setType($type);
+
+    public function getCreationDate();
+
+    public function getLastModificationDate();
 }

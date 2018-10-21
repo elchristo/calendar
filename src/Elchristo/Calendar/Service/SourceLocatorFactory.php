@@ -18,7 +18,7 @@ class SourceLocatorFactory implements FactoryInterface
      * @param string             $requestedName
      * @param array              $options
      *
-     * @return SourceBuilder
+     * @return SourceLocator
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {

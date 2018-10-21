@@ -29,7 +29,7 @@ abstract class AbstractJsonEvent implements ConvertibleEventInterface
      * Set additional options
      *
      * @param array $options
-     * @return AbstractVEvent
+     * @return self
      *
      */
     public function setOptions(array $options = [])

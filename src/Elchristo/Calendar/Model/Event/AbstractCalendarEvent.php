@@ -13,10 +13,10 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
     const DEFAULT_IS_ALLDAY_EVENT = false;
     const DEFAULT_IS_PUBLIC_EVENT = true;
 
-    /** @var integer Unique event identifier (prefixed event id) */
+    /** @var int|string Unique event identifier (prefixed event id) */
     protected $uid;
 
-    /** @var integer Event identifier */
+    /** @var int|string Event identifier */
     protected $id;
 
     /** @var string */
@@ -40,10 +40,10 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
     /** @var DateTime */
     protected $lastModified;
 
-    /** @var boolean */
+    /** @var bool */
     protected $alldayEvent;
 
-    /** @var boolean */
+    /** @var bool */
     protected $public;
 
     /** @var string */
@@ -55,9 +55,9 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
     /**
      * Initialize event
      *
-     * @param string $id      Event identifier
-     * @param array  $values  Event attribute values (name => value pairs)
-     * @param array  $options Additional options passed to the event
+     * @param int|string $id      Event identifier
+     * @param array      $values  Event attribute values (name => value pairs)
+     * @param array      $options Additional options passed to the event
      */
     public function __construct($id, array $values = [], array $options = [])
     {
@@ -174,7 +174,8 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
 
     /**
      * Return unique event identifier
-     * @return mixed integer|string
+     *
+     * @return int|string
      */
     public function getId()
     {
@@ -183,7 +184,7 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
 
     /**
      * Return event identifier (only unique by source)
-     * @return integer
+     * @return int|string
      */
     public function getUid()
     {
@@ -264,7 +265,7 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
 
     /**
      *
-     * @return DateTime
+     * @return self
      */
     public function setStart(DateTime $dt)
     {
@@ -283,7 +284,7 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
 
     /**
      *
-     * @return DateTime
+     * @return self
      */
     public function setEnd(DateTime $dt)
     {
@@ -333,26 +334,25 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
 
     /**
      *
-     * @return boolean
+     * @return bool
      */
-    public function isAlldayEvent()
+    public function isAlldayEvent() : bool
     {
-        return (bool) $this->alldayEvent;
+        return $this->alldayEvent;
     }
 
     /**
      *
-     * @param boolean $status
+     * @param bool $allday
      * @return self
      */
-    public function setAlldayEvent($status = self::DEFAULT_IS_ALLDAY_EVENT)
+    public function setAlldayEvent(bool $allday = self::DEFAULT_IS_ALLDAY_EVENT)
     {
-        if (\is_bool($status) || $status === 'true' || $status === 'false') {
-            $this->alldayEvent = (bool) $status;
-            if ((bool) $status === true) {
-                $this->setHourFrom($this->buildDateTime(0, 0))
-                     ->setHourTo($this->buildDateTime(23, 59));
-            }
+        $this->alldayEvent = $allday;
+
+        if ($allday === true) {
+            $this->start->setTime(0, 0, 0);
+            $this->end->setTime(23, 59, 59);
         }
 
         return $this;
@@ -360,21 +360,21 @@ abstract class AbstractCalendarEvent implements CalendarEventInterface
 
     /**
      *
-     * @return boolean
+     * @return bool
      */
-    public function isPublic()
+    public function isPublic() : bool
     {
-        return (bool) $this->public;
+        return $this->public;
     }
 
     /**
      *
-     * @param boolean $status
+     * @param bool $status
      * @return self
      */
-    public function setPublic($status = self::DEFAULT_IS_PUBLIC_EVENT)
+    public function setPublic(bool $status = self::DEFAULT_IS_PUBLIC_EVENT)
     {
-        $this->public = (bool) $status;
+        $this->public = $status;
         return $this;
     }
 

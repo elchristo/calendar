@@ -10,7 +10,7 @@ use Elchristo\Calendar\Service\Config\Config;
  */
 interface ConfigAwareInterface
 {
-    /** @return array */
+    /** @return Config Calendar configuration */
     public function getConfig();
 
     /** @param Config $config */

@@ -25,7 +25,7 @@ abstract class AbstractFullCalendarEvent implements ConvertibleEventInterface
     protected $title;
 
     /** @var string title details to show on hover */
-    protected $titleDetails = null;
+    protected $titleDetails;
 
     /** @var string event description */
     protected $description;
@@ -59,7 +59,7 @@ abstract class AbstractFullCalendarEvent implements ConvertibleEventInterface
             'id'          => $this->event->getUid(),
             'idBySource'  => $this->event->getId(),
             'title'       => $this->title,
-            'titleDetails' => \is_null($this->titleDetails) ? $this->description : $this->titleDetails,
+            'titleDetails' => null === $this->titleDetails ? $this->description : $this->titleDetails,
             'description' => $this->description,
             'published'   => $this->event->isPublic(),
             'type'        => $this->event->getType(),
@@ -100,7 +100,7 @@ abstract class AbstractFullCalendarEvent implements ConvertibleEventInterface
      * @param string $name      method name
      * @param array  $arguments arguments
      *
-     * @return self
+     * @return self|null
      */
     public function __call($name, $arguments)
     {
@@ -146,16 +146,14 @@ abstract class AbstractFullCalendarEvent implements ConvertibleEventInterface
     /**
      * Find attribut by value
      *
-     * @param mixed array|string|object $attributes single or multiple attributes
-     * @param string                    $value      value
+     * @param array|string|object $attributes single or multiple attributes
+     * @param string              $value      value
      * @return string
      */
     private function findAttributeValue($attributes, $value = null)
     {
-        // Construire tableau avec les éléments
         $aElements = (\is_array($attributes)) ? $attributes : [$attributes];
 
-        // Parcourir les éléments
         foreach ($aElements as $elem) {
             if (\is_array($elem)) {
                 $value .= $this->findAttributeValue($elem, $value);
@@ -182,7 +180,7 @@ abstract class AbstractFullCalendarEvent implements ConvertibleEventInterface
                 $value = $elem;
             } elseif (\is_object($elem)) {
                 if (\in_array(Collection::class, \class_implements($elem))) {
-                    $value = $elem->toList(['title']);
+                    $value = $elem->toList('title');
                 }
             }
         }

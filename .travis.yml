@@ -2,15 +2,25 @@ language: php
 php:
   - '7.0'
   - '7.1'
+  - '7.2'
 sudo: false
+env:
+  RUN_PHPSTAN=false
+matrix:
+    include:
+       - php: '7.1'
+         env: RUN_PHPSTAN=true
+       - php: '7.2'
+         env: RUN_PHPSTAN=true
+cache:
+  directories:
+    - vendor
+    - $HOME/.composer/cache
 install:
   - composer self-update && composer --version
   - composer install --no-interaction
 branches:
   only: master
-cache:
-  directories:
-    - vendor
-    - $HOME/.composer/cache
 script:
-  - php vendor/bin/codecept run cli,unit # self tests
+  - php vendor/bin/codecept run cli,unit
+  - if [ $RUN_PHPSTAN = "true" ]; then php vendor/bin/phpstan analyze ./; fi

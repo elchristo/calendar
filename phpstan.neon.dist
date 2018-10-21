@@ -1,0 +1,12 @@
+parameters:
+    level: 7
+    fileExtensions:
+        - php
+    excludes_analyse:
+        - %currentWorkingDirectory%/tests/*
+        - %currentWorkingDirectory%/vendor/*
+    ignoreErrors:
+        - '#$subject of function str_replace expects array|string, string|false given.#'
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+::asArray\(\)#'
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+ContainerInterface::build\(\)#'
+        - '#Call to an undefined method object::toList().#'

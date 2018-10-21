@@ -63,12 +63,12 @@ abstract class AbstractIcalEvent implements ConvertibleEventInterface
 
     /**
      *
-     * @param Event $event Calendar event to convert
+     * @param CalendarEventInterface $event Calendar event to convert
      */
     public function __construct(CalendarEventInterface $event)
     {
         $this->event = $event;
-        $tsNow = \DateTime::createFromFormat(self::DTSTAMP_FORMAT, time());
+        $tsNow = (string) \time();
         $this->timestamp = $tsNow;
         $this->created = $tsNow;
         $this->lastModified = $tsNow;

@@ -1,6 +1,13 @@
 # Changelog
 
-## 2.0
+## 2.1.0
+
+ - Add phpstan and fix errors
+ - Improve travis CI and add PHP 7.2
+ - Small code improvements and documentation
+
+
+## 2.0.0
 
  - new stable release compatible PHP 7.1 (drop PHP 5.6 support)
  - replace internal service container by Zend Framework service manager component (#1)
