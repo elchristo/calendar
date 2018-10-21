@@ -1,6 +1,7 @@
 # Composer files
 composer.phar
 vendor/
+/phpstan.neon
 
 # Generated files
 .DS_Store
@@ -22,3 +23,8 @@ tests/_support/_generated/*
 nbproject
 *.sublime-project
 *.sublime-workspace
+.vscode
+.docker
+.dockerignore
+docker-*.yml
+Dockerfile
