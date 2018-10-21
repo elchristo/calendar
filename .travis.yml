@@ -4,6 +4,14 @@ php:
   - '7.1'
   - '7.2'
 sudo: false
+env:
+  RUN_PHPSTAN=false
+matrix:
+    include:
+       - php: '7.1'
+         env: RUN_PHPSTAN=true
+       - php: '7.2'
+         env: RUN_PHPSTAN=true
 cache:
   directories:
     - vendor
@@ -15,4 +23,4 @@ branches:
   only: master
 script:
   - php vendor/bin/codecept run cli,unit
-  - php vendor/bin/phpstan analyze ./
+  - if [ $RUN_PHPSTAN = "true" ]; then php vendor/bin/phpstan analyze ./; fi
