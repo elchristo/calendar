@@ -39,7 +39,7 @@ class SourceBuilder implements ConfigAwareInterface
             throw new InvalidArgumentException("Calendar source class {$sourceClassName} does not exist.");
         }
 
-        if (!\class_implements($sourceClassName, SourceInterface::class)) {
+        if (!\in_array(SourceInterface::class, \class_implements($sourceClassName))) {
             throw new InvalidArgumentException(\sprintf("Declared calendar source '%s' needs to implement %s.", $sourceClassName, SourceInterface::class));
         }
 

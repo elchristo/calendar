@@ -2,12 +2,13 @@
 
 namespace Elchristo\Calendar\Model;
 
+use Elchristo\Calendar\Service\Config\ConfigAwareInterface;
 use Elchristo\Calendar\Model\Event\Collection as EventsCollection;
 
 /**
  * Interface to define calendars
  */
-interface CalendarInterface
+interface CalendarInterface extends ConfigAwareInterface
 {
     /**
      * Return the calendar name

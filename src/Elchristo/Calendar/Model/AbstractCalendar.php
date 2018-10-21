@@ -3,17 +3,16 @@
 namespace Elchristo\Calendar\Model;
 
 use Elchristo\Calendar\Exception\RuntimeException;
-use Elchristo\Calendar\Model\AbstractSource;
+use Elchristo\Calendar\Model\Source\SourceInterface;
 use Elchristo\Calendar\Service\Builder\SourceBuilder;
 use Elchristo\Calendar\Model\Event\Collection as EventsCollection;
 use Elchristo\Calendar\Model\CalendarInterface;
-use Elchristo\Calendar\Service\Config\ConfigAwareInterface;
 use Elchristo\Calendar\Service\Config\ConfigProviderTrait;
 
 /**
  * Default abstract calendar class
  */
-abstract class AbstractCalendar implements CalendarInterface, ConfigAwareInterface
+abstract class AbstractCalendar implements CalendarInterface
 {
     use ConfigProviderTrait;
 
@@ -76,7 +75,7 @@ abstract class AbstractCalendar implements CalendarInterface, ConfigAwareInterfa
      * Returns a source of the calendar if existing
      *
      * @param string $sourceName Requested source name
-     * @return AbstractSource
+     * @return SourceInterface
      * @throws RuntimeException
      */
     final public function getSource(string $sourceName)

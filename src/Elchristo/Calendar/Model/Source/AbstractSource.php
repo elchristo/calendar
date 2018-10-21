@@ -47,7 +47,7 @@ abstract class AbstractSource implements SourceInterface
      * Initialize the unique identifier of the events source
      *
      * @param mixed $identifier
-     * @return mixed string|int
+     * @return string|int
      */
     private function initIdentifier($identifier)
     {
@@ -85,7 +85,7 @@ abstract class AbstractSource implements SourceInterface
                 $this->fetchedResults = $this->fetchResults();
                 $this->buildEvents($this->fetchedResults);
             } catch (\Exception $e) {
-                throw new RuntimeException('Unable to build events collection for source class %s. Reason : ', \get_called_class(), $e->getMessage());
+                throw new RuntimeException(\sprintf('Unable to build events collection for source class %s. Reason : %s', \get_called_class(), $e->getMessage()));
             }
         }
 
@@ -163,10 +163,10 @@ abstract class AbstractSource implements SourceInterface
     /**
      * Inject events factory into the source while creation of the source
      *
-     * @param  EventBuilder
-     * @return SourceInterface
+     * @param EventBuilder $builder
+     * @return self
      */
-    final public function setEventBuilder($builder)
+    final public function setEventBuilder(EventBuilder $builder)
     {
         $this->eventBuilder = $builder;
         return $this;

@@ -42,6 +42,23 @@ class Collection implements IteratorAggregate
     }
 
     /**
+     * Return events of the collection as list using attribute pqssed qs parameter
+     *
+     * @return array
+     */
+    public function toList($attribute = 'title', $seperator = ', ')
+    {
+        $list = [];
+        $hydrator = new ReflectionHydrator();
+        foreach ($this->events as $key => $event) {
+            $e = $hydrator->extract($event);
+            $list .= $e[$attribute] . $seperator;
+        }
+
+        return $list;
+    }
+
+    /**
      * Get array iterator to loop all events
      *
      * @return ArrayIterator
@@ -81,7 +98,7 @@ class Collection implements IteratorAggregate
     /**
      * Remove an event from the collection
      *
-     * @param mixed integer|CalendarEventInterface $idOrEvent
+     * @param int|CalendarEventInterface $idOrEvent
      * @return Collection
      */
     public function remove($idOrEvent)

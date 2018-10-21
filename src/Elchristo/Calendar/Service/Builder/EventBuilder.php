@@ -19,8 +19,8 @@ class EventBuilder
     private $eventColors = [];
 
     /**
-     * @param ContainerInterface $sourceLocator
-     * @param array              $options
+     * @param SourceLocator $sourceLocator
+     * @param array         $options
      */
     private function __construct(SourceLocator $sourceLocator, array $options = [])
     {
@@ -90,8 +90,8 @@ class EventBuilder
     /**
      * Injects color strategy (if declared in configuration by name), otherwise the default color strategy
      *
-     * @param CalendarEventInterface   $event
-     * @param mixed[string|array|null] $nameOrOptions
+     * @param ColoredEventInterface   $event
+     * @param string|array|null $nameOrOptions
      * @return boolean
      */
     private function initColorStrategy($event, $nameOrOptions)
