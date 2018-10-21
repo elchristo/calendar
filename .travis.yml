@@ -2,15 +2,19 @@ language: php
 php:
   - '7.0'
   - '7.1'
+  - '7.2'
 sudo: false
-install:
-  - composer self-update && composer --version
-  - composer install --no-interaction
-branches:
-  only: master
 cache:
   directories:
     - vendor
     - $HOME/.composer/cache
+ env:
+  global:
+    - COMPOSER_ARGS="--no-interaction"
+install:
+  - composer self-update && composer --version
+  - composer install $COMPOSER_ARGS
+branches:
+  only: master
 script:
-  - php vendor/bin/codecept run cli,unit # self tests
+  - php vendor/bin/codecept run cli,unit
