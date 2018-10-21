@@ -8,13 +8,11 @@ cache:
   directories:
     - vendor
     - $HOME/.composer/cache
- env:
-  global:
-    - COMPOSER_ARGS="--no-interaction"
 install:
   - composer self-update && composer --version
-  - composer install $COMPOSER_ARGS
+  - composer install --no-interaction
 branches:
   only: master
 script:
   - php vendor/bin/codecept run cli,unit
+  - php vendor/bin/phpstan analyze ./
